@@ -5,7 +5,7 @@ import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
 
-import MarkdownViewer from './markdownviewer.js';
+import Viewer from './viewer.js';
 
 class App extends Component {
   constructor() {
@@ -70,7 +70,7 @@ class App extends Component {
             <Route path="/read/" render={(props) => {
               console.log(this.provider);
               const path = props.location.pathname.substr(props.match.url.length);
-              return <MarkdownViewer provider={this.provider} path={path}/>
+              return <Viewer provider={this.provider} path={path}/>
             }}/>
           </div>
         </div>
