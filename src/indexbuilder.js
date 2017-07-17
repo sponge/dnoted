@@ -10,28 +10,42 @@ class IndexBuilder extends EventEmitter {
       path_lower: '/',
       path_display: '/',
       children: {},
-      files: []
+      files: new Set(),
+      parent: undefined
     };
-    this.byId = {};
+    this.byId = new Map();
+    this.byPath = new Map();
   }
 
   updateIndex = (update) => {
     console.log("index builder got update from dropbox", update);
 
-    update.forEach((f) => { this.byId[f.id] = f; });
+    _(update).filter({'.tag': 'deleted'}).forEach((removed) => {
+      const id = this.byPath.get(removed.path_lower);
+      const item = this.byId.get(id);
+
+      delete item.parent.children[removed.name];
+      item.parent.files.delete(id);
+      this.byId.delete(id);
+      this.byPath.delete(removed.path_lower);
+    });
 
     _(update).filter({'.tag': 'folder'}).forEach((folder) => {
-      var newFolder = {
+      let node = this._findNodeForPath(folder.path_lower);
+
+      let newFolder = {
         id: folder.id,
         name: folder.name,
         path_lower: folder.path_lower,
         path_display: folder.path_display,
         children: {},
-        files: []
-      }
+        files: new Set(),
+        parent: node
+      };
 
-      let node = this._findNodeForPath(folder.path_lower);
       node.children[newFolder.name] = newFolder;
+      this.byId.set(folder.id, newFolder);
+      this.byPath.set(folder.path_lower, newFolder.id);
     });
 
     _(update).filter({'.tag': 'file'})
@@ -39,10 +53,16 @@ class IndexBuilder extends EventEmitter {
       .forEach((file) => {
         const path = file.path_lower.substr(0,file.path_lower.length-file.name.length);
         let node = this._findNodeForPath(path);
-        node.files.push(file.id);
+
+        file.parent = node;
+        node.files.add(file.id);
+
+        this.byId.set(file.id, file);
+        this.byPath.set(file.path_lower, file.id);
       });
-      
+    
     console.log(this);
+    this.emit('change', this);
   }
 
   _findNodeForPath(path) {

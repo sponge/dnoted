@@ -21,9 +21,12 @@ class App extends Component {
 
     changeTracker.on("update", (updates) => {
       this.indexBuilder.updateIndex(updates);
+    });
+
+    this.indexBuilder.on("change", (indexBuilder) => {
       this.setState({
-        index: this.indexBuilder.index,
-        byId: this.indexBuilder.byId
+        index: indexBuilder.index,
+        byId: indexBuilder.byId
       })
     });
 
@@ -43,16 +46,16 @@ class App extends Component {
   renderIndexNode(node) {
     const inner = (subnode) => {
       const subeles = _.map(subnode.children, inner);
-      const files = _.map(subnode.files, (file) => {
-        return <li key={file} data-id={file}>{this.state.byId[file].name}</li>;
+      const files = _.map(Array.from(subnode.files), (file) => {
+        return <li key={file} data-id={file}>{this.state.byId.get(file).name}</li>;
       });
 
       return <ul key={subnode.id}>
         <li>
           {subnode.name}
           {subeles}
+          <ul>{files}</ul>
         </li>
-        {files}
       </ul>;
     }
 
