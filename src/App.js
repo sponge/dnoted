@@ -6,6 +6,7 @@ import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
 
 import Viewer from './viewer.js';
+import Editor from './editor.js';
 
 class App extends Component {
   constructor() {
@@ -70,7 +71,11 @@ class App extends Component {
 
               <Route path="/edit/*" render={(props) => {
                 let path = '/'+ props.match.params[0];
-                return <h1>editing {path}</h1>;
+                if (path.endsWith(".md") === false) {
+                  path += (path.endsWith('/') ? '' : '/') + "index.md";
+                }
+
+                return <Editor provider={this.provider} path={path}/>
               }}/>
 
               <Route path="/*" render={(props) => {
@@ -79,7 +84,10 @@ class App extends Component {
                   path += (path.endsWith('/') ? '' : '/') + "index.md";
                 }
 
-                return <Viewer provider={this.provider} path={path}/>
+                return <div>
+                  <div><Link to={"/edit"+path}>Edit</Link></div>
+                  <Viewer provider={this.provider} path={path}/>
+                </div>
               }}/>
             </Switch>
           </div>

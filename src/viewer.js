@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Marked from 'marked';
 
-class MarkdownViewer extends Component {
+class Viewer extends Component {
   constructor() {
     super();
 
@@ -15,8 +15,8 @@ class MarkdownViewer extends Component {
   }
 
   renderFile = (path) => {
-    this.props.provider.getTextContents(path).then((text) => {
-      this.setState({body: Marked(text)});
+    this.props.provider.getTextContents(path).then((file) => {
+      this.setState({body: Marked(file.text)});
     })
     .catch((error) => {
       console.error(error);
@@ -35,4 +35,4 @@ class MarkdownViewer extends Component {
   }
 }
 
-export default MarkdownViewer;
+export default Viewer;
