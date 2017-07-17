@@ -31,3 +31,10 @@
     box-shadow: 5px 5px 20px #2a2a2a;
     background-color: #2C2C2C;
 }
+
+.App .content input.revisions {
+    direction: rtl;
+    width: 400px;
+    margin: 0 auto;
+    display: inline-block;
+}

@@ -17,19 +17,28 @@ class DropboxProvider extends EventEmitter {
       });
   }
 
+  getFileRevisions = (path) => {
+    const revPromise = new Promise((resolve, reject) => {
+      this.dbx.filesListRevisions({path: path}).then((response) => {
+        resolve(response.entries);
+      })
+      .catch(reject);
+    });
+
+    return revPromise;
+  }
+
   getTextContents = (path) => {
     const filePromise = new Promise((resolve, reject) => {
       this.dbx.filesDownload({path: path}).then((response) => {
         const blob = response.fileBlob;
         const reader = new FileReader();
         reader.addEventListener("loadend", (reader) => {
-          resolve(reader.target.result);
+          resolve({text: reader.target.result, rev: response.rev});
         });
         reader.readAsText(blob);
       })
-      .catch((error) => {
-        reject(error);
-      })
+      .catch(reject);
     });
 
     return filePromise;
