@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import './App.css';
-import ChangeTracker from './changetracker.js';
+import DropboxProvider from './changetracker.js';
 import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
 
-import DropboxViewer from './dropboxviewer.js';
+import MarkdownViewer from './dropboxviewer.js';
 
 class App extends Component {
   constructor() {
     super();
 
-    const changeTracker = new ChangeTracker(localStorage['access_token']);
+    this.provider = new DropboxProvider(localStorage['access_token']);
     this.indexBuilder = new IndexBuilder();
 
     this.state = {
@@ -20,7 +20,7 @@ class App extends Component {
       selected: undefined,
     };
 
-    changeTracker.on("update", (updates) => {
+    this.provider.on("update", (updates) => {
       this.indexBuilder.updateIndex(updates);
     });
 
@@ -68,7 +68,9 @@ class App extends Component {
           </div>
           <div className="content">
             <Route path="/read/" render={(props) => {
-              return <DropboxViewer path={props.location.pathname.substr(props.match.url.length)}/>
+              console.log(this.provider);
+              const path = props.location.pathname.substr(props.match.url.length);
+              return <MarkdownViewer provider={this.provider} path={path}/>
             }}/>
           </div>
         </div>

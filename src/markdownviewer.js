@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import Dropbox from 'dropbox';
 import Marked from 'marked';
 
-class DropboxViewer extends Component {
+class MarkdownViewer extends Component {
   constructor() {
     super();
 
     this.state = {
       body: null
     }
-
-    this.dbx = new Dropbox({ accessToken: localStorage["access_token"] });
   }
 
   componentDidMount() {
@@ -18,13 +15,8 @@ class DropboxViewer extends Component {
   }
 
   renderFile = (path) => {
-    this.dbx.filesDownload({path: path}).then((response) => {
-      const blob = response.fileBlob;
-      const reader = new FileReader();
-      reader.addEventListener("loadend", (reader) => {
-        this.setState({body: Marked(reader.target.result)});
-      });
-      reader.readAsText(blob);
+    this.props.provider.getTextContents(path).then((text) => {
+      this.setState({body: Marked(text)});
     })
     .catch((error) => {
       console.error(error);
@@ -46,4 +38,4 @@ class DropboxViewer extends Component {
   }
 }
 
-export default DropboxViewer;
+export default MarkdownViewer;

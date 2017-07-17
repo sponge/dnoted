@@ -7,7 +7,7 @@ class IndexBuilder extends EventEmitter {
     // root node for tree-based view
     this.index = {
       id: 'root',
-      name: '/',
+      name: 'Main',
       path_lower: '/',
       path_display: '/',
       children: {},

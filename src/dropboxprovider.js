@@ -2,7 +2,7 @@ import Dropbox from 'dropbox';
 import EventEmitter from 'event-emitter-es6';
 // note: using fetch because of https://github.com/dropbox/dropbox-sdk-js/issues/85
 
-class ChangeTracker extends EventEmitter {
+class DropboxProvider extends EventEmitter {
   constructor(access_token) {
     super()
     this.dbx = new Dropbox({accessToken: access_token});
@@ -15,6 +15,24 @@ class ChangeTracker extends EventEmitter {
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  getTextContents = (path) => {
+    const filePromise = new Promise((resolve, reject) => {
+      this.dbx.filesDownload({path: path}).then((response) => {
+        const blob = response.fileBlob;
+        const reader = new FileReader();
+        reader.addEventListener("loadend", (reader) => {
+          resolve(reader.target.result);
+        });
+        reader.readAsText(blob);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+    });
+
+    return filePromise;
   }
 
   _fileslistFolderHandler = (response) => {
@@ -46,4 +64,4 @@ class ChangeTracker extends EventEmitter {
 
 }
 
-export default ChangeTracker
+export default DropboxProvider
