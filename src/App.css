@@ -1,0 +1,18 @@
+.App .sidebar {
+    width: 20%;
+    display: inline-block;
+    overflow: hidden;
+    margin-top: 1em;
+}
+
+.App .sidebar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 0 1em;
+}
+
+.App .content {
+    width: 80%;
+    display: inline-block;
+    vertical-align: top;
+}

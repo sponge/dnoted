@@ -63,10 +63,14 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
-          {this.renderIndexNode(this.state.index)}
-          <Route path="/read/" render={(props) => {
-            return <DropboxViewer path={props.location.pathname.substr(props.match.url.length)}/>
-          }}/>
+          <div className="sidebar">
+            {this.renderIndexNode(this.state.index)}
+          </div>
+          <div className="content">
+            <Route path="/read/" render={(props) => {
+              return <DropboxViewer path={props.location.pathname.substr(props.match.url.length)}/>
+            }}/>
+          </div>
         </div>
       </Router>
     );
