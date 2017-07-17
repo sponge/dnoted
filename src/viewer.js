@@ -31,10 +31,7 @@ class MarkdownViewer extends Component {
   }
 
   render() {
-    return <div>
-      <h1>{this.props.path}</h1>
-      <p dangerouslySetInnerHTML={{__html: this.state.body}}></p>
-    </div>;
+    return <div className="page" dangerouslySetInnerHTML={{__html: this.state.body}} />;
   }
 }
 

@@ -49,7 +49,7 @@ class App extends Component {
 
       return <ul key={subnode.id}>
         <li>
-          {subnode.name}
+          {subnode.indexId ? <Link to={`/read${subnode.path_lower}`}>{subnode.name}</Link> : subnode.name}
           {subeles}
           <ul>{files}</ul>
         </li>
@@ -68,8 +68,11 @@ class App extends Component {
           </div>
           <div className="content">
             <Route path="/read/" render={(props) => {
-              console.log(this.provider);
-              const path = props.location.pathname.substr(props.match.url.length);
+              let path = props.location.pathname.substr(props.match.url.length);
+              if (path.endsWith(".md") === false) {
+                path += "/index.md";
+              }
+              console.log(path);
               return <Viewer provider={this.provider} path={path}/>
             }}/>
           </div>

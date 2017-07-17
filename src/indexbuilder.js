@@ -12,7 +12,8 @@ class IndexBuilder extends EventEmitter {
       path_display: '/',
       children: {},
       files: new Set(),
-      parent: undefined
+      parent: undefined,
+      indexId: null
     };
     // listing of everything in dropbox by dropbox id
     this.byId = new Map();
@@ -22,7 +23,7 @@ class IndexBuilder extends EventEmitter {
 
   // update the index based on the passed in update
   updateIndex = (update) => {
-    console.log("index builder got update from dropbox", update);
+    console.log("index builder: got update from dropbox", update);
 
     // handle file deletes
     _(update).filter({'.tag': 'deleted'}).forEach((removed) => {
@@ -30,7 +31,11 @@ class IndexBuilder extends EventEmitter {
       const id = this.byPath.get(removed.path_lower);
       const item = this.byId.get(id);
 
+
       // remove this item from all places (subfolder, item, and id/path lookups)
+      if (item.parent.indexId == id) {
+        item.parent.indexId = null;
+      }
       delete item.parent.children[removed.name];
       item.parent.files.delete(id);
       this.byId.delete(id);
@@ -49,8 +54,11 @@ class IndexBuilder extends EventEmitter {
         path_display: folder.path_display,
         children: {},
         files: new Set(),
-        parent: node
+        parent: node,
+        indexId: null
       };
+
+      // FIXME: check if an index exists
 
       node.children[newFolder.name] = newFolder;
       this.byId.set(folder.id, newFolder);
@@ -66,13 +74,18 @@ class IndexBuilder extends EventEmitter {
         let node = this._findNodeForPath(path);
 
         file.parent = node;
+        
+        if (file.name === "index.md") {
+          node.indexId = file.id;
+        } else {
+          node.files.add(file.id);
+        }
 
-        node.files.add(file.id);
         this.byId.set(file.id, file);
         this.byPath.set(file.path_lower, file.id);
       });
     
-    console.log(this);
+    console.log("index builder: emitting change event:", this);
     this.emit('change', this);
   }
 
