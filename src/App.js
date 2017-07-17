@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import './App.css';
-import DropboxProvider from './changetracker.js';
+import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
 
-import MarkdownViewer from './dropboxviewer.js';
+import MarkdownViewer from './markdownviewer.js';
 
 class App extends Component {
   constructor() {
