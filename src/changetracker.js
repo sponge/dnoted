@@ -1,14 +1,16 @@
 import Dropbox from 'dropbox';
+import EventEmitter from 'event-emitter-es6';
 // note: using fetch because of https://github.com/dropbox/dropbox-sdk-js/issues/85
 
-class ChangeTracker {
+class ChangeTracker extends EventEmitter {
   constructor(access_token) {
+    super()
     this.dbx = new Dropbox({accessToken: access_token});
     this.access_token = access_token;
     this.cursor = null;
     this.active = false;
 
-    this.dbx.filesListFolder({path: ''})
+    this.dbx.filesListFolder({path: '', recursive: true})
       .then(this._fileslistFolderHandler)
       .catch((error) => {
         console.error(error);
@@ -16,8 +18,8 @@ class ChangeTracker {
   }
 
   _fileslistFolderHandler = (response) => {
-    console.log(response);
     this.cursor = response.cursor;
+    this.emit("update", response.entries)
     setTimeout(this._waitForUpdate, 0);
   }
 

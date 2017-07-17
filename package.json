@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "dropbox": "^2.5.4",
+    "event-emitter-es6": "^1.1.5",
     "lodash": "^4.17.4",
     "query-string": "^4.3.4",
     "react": "^15.6.1",
