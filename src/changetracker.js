@@ -42,14 +42,6 @@ class ChangeTracker extends EventEmitter {
 
       this.dbx.filesListFolderContinue({cursor: this.cursor}).then(this._fileslistFolderHandler);
     })
-    // this.dbx.filesListFolderLongpoll({
-    //   cursor: this.cursor
-    // }).then((response) => {
-    //   console.log(response);
-    // }).catch((error) => {
-    //   console.log(error);
-    //   clearInterval(this.hnd);
-    // })
   };
 
 }

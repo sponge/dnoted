@@ -43,6 +43,7 @@ class App extends Component {
     })
   }
 
+  // return a list of folders and files recursively
   renderIndexNode(node) {
     const inner = (subnode) => {
       const subeles = _.map(subnode.children, inner);
@@ -63,10 +64,9 @@ class App extends Component {
   }
 
   render = () => {
-    const eles = this.renderIndexNode(this.state.index);
     return (
       <div className="App">
-        {eles}
+        {this.renderIndexNode(this.state.index)}
       </div>
     );
   }
