@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import './App.css';
 import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';
@@ -32,10 +32,6 @@ class App extends Component {
     });
   }
 
-  componentWillUpdate(nextProps, nextState) {
-
-  }
-
   // return a list of folders and files recursively
   renderIndexNode(node) {
     const inner = (subnode) => {
@@ -43,13 +39,13 @@ class App extends Component {
       const files = _.map(Array.from(subnode.files), (id) => {
         const file = this.state.byId.get(id);
         return <li key={file.id} data-id={file.id}>
-          <Link to={`/read${file.path_lower}`}>{file.name}</Link>
+          <Link to={file.path_lower}>{file.name}</Link>
           </li>;
       });
 
       return <ul key={subnode.id}>
         <li>
-          {subnode.indexId ? <Link to={`/read${subnode.path_lower}`}>{subnode.name}</Link> : subnode.name}
+          {subnode.indexId ? <Link to={subnode.path_lower}>{subnode.name}</Link> : subnode.name}
           {subeles}
           <ul>{files}</ul>
         </li>
@@ -67,14 +63,25 @@ class App extends Component {
             {this.renderIndexNode(this.state.index)}
           </div>
           <div className="content">
-            <Route path="/read/" render={(props) => {
-              let path = props.location.pathname.substr(props.match.url.length);
-              if (path.endsWith(".md") === false) {
-                path += "/index.md";
-              }
-              console.log(path);
-              return <Viewer provider={this.provider} path={path}/>
-            }}/>
+            <Switch>
+              <Route exact path="/settings" render={(props) => {
+                return <h1>settings</h1>;
+              }}/>
+
+              <Route path="/edit/*" render={(props) => {
+                let path = '/'+ props.match.params[0];
+                return <h1>editing {path}</h1>;
+              }}/>
+
+              <Route path="/*" render={(props) => {
+                let path = '/'+ props.match.params[0];
+                if (path.endsWith(".md") === false) {
+                  path += (path.endsWith('/') ? '' : '/') + "index.md";
+                }
+
+                return <Viewer provider={this.provider} path={path}/>
+              }}/>
+            </Switch>
           </div>
         </div>
       </Router>

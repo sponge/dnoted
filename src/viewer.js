@@ -25,7 +25,7 @@ class MarkdownViewer extends Component {
   
   componentWillUpdate(nextProps, nextState) {
     if (nextProps.path !== this.props.path) {
-      nextState.body = "Loading...";
+      nextState.body = "";
       this.renderFile(nextProps.path);
     }
   }

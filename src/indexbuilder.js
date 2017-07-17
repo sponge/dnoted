@@ -33,7 +33,7 @@ class IndexBuilder extends EventEmitter {
 
 
       // remove this item from all places (subfolder, item, and id/path lookups)
-      if (item.parent.indexId == id) {
+      if (item.parent.indexId === id) {
         item.parent.indexId = null;
       }
       delete item.parent.children[removed.name];
