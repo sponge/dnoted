@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { Input, Toolbar, NavLink } from 'rebass'
 import './App.css';
 import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';

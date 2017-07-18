@@ -6,7 +6,7 @@ class Viewer extends Component {
     super();
 
     this.state = {
-      body: null
+      body: ""
     }
   }
 
@@ -31,7 +31,7 @@ class Viewer extends Component {
   }
 
   render() {
-    return <div className="page" dangerouslySetInnerHTML={{__html: this.state.body}} />;
+    return <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} />;
   }
 }
 

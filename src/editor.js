@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Flex, Box } from 'rebass';
 import Marked from 'marked';
 
 class Editor extends Component {
@@ -6,8 +7,8 @@ class Editor extends Component {
     super();
     
     this.state = {
-      body: null,
-      preview: null
+      body: "",
+      preview: ""
     }
   }
   
