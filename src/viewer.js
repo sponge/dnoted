@@ -33,7 +33,7 @@ class Viewer extends Component {
   }
   
   componentWillUpdate(nextProps, nextState) {
-    const newerRevision = nextProps.latestRev !== null && nextState.rev !== null && nextProps.latestRev !== nextState.rev;
+    const newerRevision = nextProps.path === this.props.path && nextProps.latestRev !== null && nextState.rev !== null && nextProps.latestRev !== nextState.rev;
     if (nextProps.path !== this.props.path || newerRevision) {
       if (!newerRevision) {
         nextState.body = "";
@@ -45,8 +45,8 @@ class Viewer extends Component {
   render() {
     return <div>
       <Toolbar className="view-toolbar">
-        <Text>{this.state.filename}</Text>
-        <NavLink ml='auto' is={Link} to={"/edit"+this.props.path}>Edit</NavLink>
+        {this.state.body.length ? <Text>{this.state.filename}</Text> : null }
+        {this.state.body.length ? <NavLink ml='auto' is={Link} to={"/edit"+this.props.path}>Edit</NavLink> : null }
       </Toolbar>
       {this.state.body.length ? <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} /> : null}
     </div>
