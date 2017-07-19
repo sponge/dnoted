@@ -28,6 +28,7 @@ class Viewer extends Component {
       });
     })
     .catch((error) => {
+      // FIXME: error handling
       console.error(error);
     })
   }
@@ -43,6 +44,7 @@ class Viewer extends Component {
   }
 
   render() {
+    // FIXME: disable button, pass in title from props?
     return <div>
       <Toolbar className="view-toolbar">
         {this.state.body.length ? <Text>{this.state.filename}</Text> : null }

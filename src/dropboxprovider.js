@@ -2,6 +2,8 @@ import Dropbox from 'dropbox';
 import EventEmitter from 'event-emitter-es6';
 // note: using fetch because of https://github.com/dropbox/dropbox-sdk-js/issues/85
 
+// FIXME: pass a wrapped error back to make it slightly more vendor agnostic
+
 class DropboxProvider extends EventEmitter {
   constructor(access_token) {
     super()
@@ -18,12 +20,12 @@ class DropboxProvider extends EventEmitter {
   }
 
   movePath = (oldPath, newPath) => {
+    // FIXME: should probably pass something relevant back
     const movePromise = new Promise((resolve, reject) => {
       this.dbx.filesMove({
         from_path: oldPath,
         to_path: newPath
       }).then((response) => {
-        console.log(response);
         resolve();
       }).catch((error) => {
         console.error(error);
@@ -35,6 +37,7 @@ class DropboxProvider extends EventEmitter {
   }
 
   getFileRevisions = (path) => {
+    // FIXME: don't use dropbox responses directly, make our own object
     const revPromise = new Promise((resolve, reject) => {
       this.dbx.filesListRevisions({path: path}).then((response) => {
         resolve(response.entries);
@@ -67,6 +70,7 @@ class DropboxProvider extends EventEmitter {
   }
 
   setTextContents = (path, text) => {
+    // FIXME: should probably pass something relevant back
     const filePromise = new Promise((resolve, reject) => {
       this.dbx.filesUpload({ path: path, contents: text, mode:{'.tag': 'overwrite'} }).then((response) => {
         resolve();
@@ -84,6 +88,7 @@ class DropboxProvider extends EventEmitter {
   }
 
   _waitForUpdate = () => {
+    // FIXME: emit event for polling reconnected
     this.active = true;
     fetch('https://notify.dropboxapi.com/2/files/list_folder/longpoll', {
       method: 'POST',
@@ -93,6 +98,7 @@ class DropboxProvider extends EventEmitter {
       return response.json();
     }).catch((error) => {
       console.error("Failed to longpoll, killing update loop:", error);
+      // FIXME: emit event for polling stopped (badge to the left of Main?)
       this.active = false;
     }).then((resp) => {
       if (resp.changes === false) {

@@ -20,6 +20,8 @@ class Editor extends Component {
   componentDidMount() {
     this.renderFile(this.props.path);
 
+    // FIXME: attach keyboard shortcuts
+
     this.editDOM = ReactDOM.findDOMNode(this.refs.edit)
     this.previewDOM = ReactDOM.findDOMNode(this.refs.preview)
     //this.previewDOM.addEventListener('scroll', this._handleScroll.bind(this));
@@ -45,6 +47,7 @@ class Editor extends Component {
       });
     })
     .catch((error) => {
+      // FIXME: error handling
       console.error(error);
     })
   }
@@ -74,8 +77,6 @@ class Editor extends Component {
       // FIXME: error handling
       console.log(error);
     });
-
-    console.log(move);
   }
 
   onNameChange = (event) => {

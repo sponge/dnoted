@@ -67,6 +67,8 @@ class App extends Component {
   }
 
   render = () => {
+    // FIXME: this is starting to get big and ugly. move them out to separate components
+    // FIXME: toolbars not affixing to top of page
     return (
       <Provider>
         <Router>
@@ -79,10 +81,6 @@ class App extends Component {
             </Box>
             <Box w={5/6} className="content">
               <Switch>
-                <Route exact path="/settings" render={(props) => {
-                  return <h1>settings</h1>;
-                }}/>
-
                 <Route path="/edit/*" render={(props) => {
                   const path = this.getFilePath(props);
                   const id = this.state.byPath.get(path);
