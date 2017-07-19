@@ -37,8 +37,7 @@ class Viewer extends Component {
     return <div>
       <Toolbar className="view-toolbar">
         <Text>{this.props.path}</Text>
-        <NavLink ml='auto'>Revisions</NavLink>
-        <NavLink is={Link} to={"/edit"+this.props.path}>Edit</NavLink>
+        <NavLink ml='auto' is={Link} to={"/edit"+this.props.path}>Edit</NavLink>
       </Toolbar>
       {this.state.body.length ? <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} /> : null}
     </div>
