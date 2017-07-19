@@ -19,7 +19,7 @@ class App extends Component {
     this.state = {
       index: this.indexBuilder.index,
       byId: this.indexBuilder.byId,
-      selected: undefined,
+      byPath: this.indexBuilder.byPath
     };
 
     this.provider.on("update", (updates) => {
@@ -57,6 +57,15 @@ class App extends Component {
     return inner(node);
   }
 
+  getFilePath(props) {
+    let path = '/'+ props.match.params[0];
+    if (path.endsWith(".md") === false) {
+      path += (path.endsWith('/') ? '' : '/') + "index.md";
+    }
+
+    return path;
+  }
+
   render = () => {
     return (
       <Provider>
@@ -75,21 +84,21 @@ class App extends Component {
                 }}/>
 
                 <Route path="/edit/*" render={(props) => {
-                  let path = '/'+ props.match.params[0];
-                  if (path.endsWith(".md") === false) {
-                    path += (path.endsWith('/') ? '' : '/') + "index.md";
-                  }
+                  const path = this.getFilePath(props);
+                  const id = this.state.byPath.get(path);
+                  const editFile = this.state.byId.get(id);
+                  const rev = editFile ? editFile.rev : null;
 
-                  return <Editor provider={this.provider} path={path}/>
+                  return <Editor provider={this.provider} path={path} latestRev={rev}/>
                 }}/>
 
                 <Route path="/*" render={(props) => {
-                  let path = '/'+ props.match.params[0];
-                  if (path.endsWith(".md") === false) {
-                    path += (path.endsWith('/') ? '' : '/') + "index.md";
-                  }
+                  const path = this.getFilePath(props);
+                  const id = this.state.byPath.get(path);
+                  const editFile = this.state.byId.get(id);
+                  const rev = editFile ? editFile.rev : null;
 
-                  return <Viewer provider={this.provider} path={path}/>
+                  return <Viewer provider={this.provider} path={path} latestRev={rev}/>
                 }}/>
               </Switch>
             </Box>

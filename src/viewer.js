@@ -10,7 +10,7 @@ class Viewer extends Component {
 
     this.state = {
       filename: "",
-      rev: "",
+      rev: null,
       body: ""
     }
   }
@@ -23,7 +23,8 @@ class Viewer extends Component {
     this.props.provider.getTextContents(path).then((file) => {
       this.setState({
         body: Marked(file.text),
-        filename: file.name
+        filename: file.name,
+        rev: file.rev
       });
     })
     .catch((error) => {
@@ -32,8 +33,11 @@ class Viewer extends Component {
   }
   
   componentWillUpdate(nextProps, nextState) {
-    if (nextProps.path !== this.props.path) {
-      nextState.body = "";
+    const newerRevision = nextProps.latestRev !== null && nextState.rev !== null && nextProps.latestRev !== nextState.rev;
+    if (nextProps.path !== this.props.path || newerRevision) {
+      if (!newerRevision) {
+        nextState.body = "";
+      }
       this.renderFile(nextProps.path);
     }
   }

@@ -51,7 +51,6 @@ class DropboxProvider extends EventEmitter {
         const blob = response.fileBlob;
         const reader = new FileReader();
         reader.addEventListener("loadend", (reader) => {
-          console.log(response);
           resolve({
             name: response.name,
             text: reader.target.result,
@@ -72,7 +71,9 @@ class DropboxProvider extends EventEmitter {
         resolve();
       })
       .catch(reject);
-    });  
+    });
+
+    return filePromise;
   }
 
   _fileslistFolderHandler = (response) => {
