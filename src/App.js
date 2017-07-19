@@ -29,7 +29,8 @@ class App extends Component {
     this.indexBuilder.on("change", (indexBuilder) => {
       this.setState({
         index: indexBuilder.index,
-        byId: indexBuilder.byId
+        byId: indexBuilder.byId,
+        byPath: this.indexBuilder.byPath
       })
     });
   }
