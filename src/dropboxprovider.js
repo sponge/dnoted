@@ -17,6 +17,23 @@ class DropboxProvider extends EventEmitter {
       });
   }
 
+  movePath = (oldPath, newPath) => {
+    const movePromise = new Promise((resolve, reject) => {
+      this.dbx.filesMove({
+        from_path: oldPath,
+        to_path: newPath
+      }).then((response) => {
+        console.log(response);
+        resolve();
+      }).catch((error) => {
+        console.error(error);
+        reject();
+      });
+    });
+
+    return movePromise;
+  }
+
   getFileRevisions = (path) => {
     const revPromise = new Promise((resolve, reject) => {
       this.dbx.filesListRevisions({path: path}).then((response) => {
@@ -34,7 +51,12 @@ class DropboxProvider extends EventEmitter {
         const blob = response.fileBlob;
         const reader = new FileReader();
         reader.addEventListener("loadend", (reader) => {
-          resolve({text: reader.target.result, rev: response.rev});
+          console.log(response);
+          resolve({
+            name: response.name,
+            text: reader.target.result,
+            rev: response.rev
+          });
         });
         reader.readAsText(blob);
       })
@@ -42,6 +64,15 @@ class DropboxProvider extends EventEmitter {
     });
 
     return filePromise;
+  }
+
+  setTextContents = (path, text) => {
+    const filePromise = new Promise((resolve, reject) => {
+      this.dbx.filesUpload({ path: path, contents: text, mode:{'.tag': 'overwrite'} }).then((response) => {
+        resolve();
+      })
+      .catch(reject);
+    });  
   }
 
   _fileslistFolderHandler = (response) => {

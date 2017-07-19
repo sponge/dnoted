@@ -10,6 +10,7 @@ class Editor extends Component {
     super();
     
     this.state = {
+      filename: "",
       body: "",
       preview: ""
     }
@@ -36,11 +37,37 @@ class Editor extends Component {
   renderFile = (path) => {
     this.props.provider.getTextContents(path).then((file) => {
       this.setState({
-        body: file.text
+        body: file.text,
+        filename: file.name
       });
     })
     .catch((error) => {
       console.error(error);
+    })
+  }
+
+  saveFile = (event) => {
+    let move = new Promise((a) => a())
+    const newPath = this.props.path.split('/').slice(0,-1).join('/')+'/'+this.state.filename;
+    
+    if (!this.props.path.endsWith(this.state.filename)) {
+      move = this.props.provider.movePath(this.props.path, newPath);
+    }
+
+    move.then(() => {
+      return this.props.provider.setTextContents(newPath, this.state.body);
+    }).then(() => {
+      console.log('success?');
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    console.log(move);
+  }
+
+  onNameChange = (event) => {
+    this.setState({
+      filename: event.target.value
     })
   }
   
@@ -61,11 +88,11 @@ class Editor extends Component {
   }
   
   render() {
-    return <div>
+    return <Flex direction="column">
       <Toolbar className="view-toolbar">
-        <Input defaultValue={this.props.path} placeholder='Title'/>
+        <Input onChange={this.onNameChange} value={this.state.filename} placeholder='Title'/>
         <NavLink is={Link} to={this.props.path} ml='auto'>Cancel</NavLink>
-        <NavLink>Save</NavLink>
+        <NavLink onClick={this.saveFile}>Save</NavLink>
       </Toolbar> 
       <Flex className="editor-area">
         <Box w={6/10}>
@@ -75,7 +102,7 @@ class Editor extends Component {
           <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: this.state.preview}}></div>
         </Box>
       </Flex>
-    </div>
+    </Flex>
   }
 }
 

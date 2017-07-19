@@ -9,6 +9,8 @@ class Viewer extends Component {
     super();
 
     this.state = {
+      filename: "",
+      rev: "",
       body: ""
     }
   }
@@ -19,7 +21,10 @@ class Viewer extends Component {
 
   renderFile = (path) => {
     this.props.provider.getTextContents(path).then((file) => {
-      this.setState({body: Marked(file.text)});
+      this.setState({
+        body: Marked(file.text),
+        filename: file.name
+      });
     })
     .catch((error) => {
       console.error(error);
@@ -36,7 +41,7 @@ class Viewer extends Component {
   render() {
     return <div>
       <Toolbar className="view-toolbar">
-        <Text>{this.props.path}</Text>
+        <Text>{this.state.filename}</Text>
         <NavLink ml='auto' is={Link} to={"/edit"+this.props.path}>Edit</NavLink>
       </Toolbar>
       {this.state.body.length ? <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} /> : null}

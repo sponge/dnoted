@@ -1,5 +1,6 @@
 .App {
-
+    width: 100vw;
+    height: 100vh;
 }
 
 .App .sidebar {
@@ -14,7 +15,11 @@
 }
 
 .App .content {
+    overflow: auto;
     /* background-color: rgba(90,0,0,64); */
+}
+
+.editor-area {
 }
 
 .App .content .page {
