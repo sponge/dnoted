@@ -1,8 +1,10 @@
+.App {
+
+}
+
 .App .sidebar {
-    width: 20%;
-    display: inline-block;
     overflow: hidden;
-    margin-top: 1em;
+    /* background-color: rgba(0,90,0,255); */
 }
 
 .App .sidebar ul {
@@ -11,44 +13,37 @@
     padding: 0 0 0 1em;
 }
 
-.App .sidebar ul li {
-    padding-bottom: 0.5em;
-}
-
 .App .content {
-    width: 80%;
-    display: inline-block;
-    vertical-align: top;
+    /* background-color: rgba(90,0,0,64); */
 }
 
 .App .content .page {
-    display: inline-block;
     font-size: 11pt;
     line-height: 1.5em;
-    max-width: 1000px;
-    box-sizing: border-box;
-    padding: 2em 6em;
-    margin: 2em auto;
-    box-shadow: 5px 5px 20px #2a2a2a;
     background-color: #2C2C2C;
 }
 
 textarea.page {
-    width: 45%;
-    height: 90vh;
-    vertical-align: top;
+    box-sizing: border-box;
+    padding: 2em;
+    resize: none;
+    overflow: auto;
+}
+
+.App .content .page.read {
+    padding: 2em 6em;
+    margin: 0 auto;
+    box-shadow: 5px 5px 20px #2a2a2a; 
+    max-width: 700px;
 }
 
 .App .content .page.preview {
-    width: 45%;
-    height: 90vh;
-    vertical-align: top;
-    overflow-y: scroll;
+    padding: 2em;
+    overflow: hidden;
 }
 
 .App .content input.revisions {
     direction: rtl;
-    width: 400px;
     margin: 0 auto;
     display: inline-block;
 }

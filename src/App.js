@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
-import { Input, Toolbar, NavLink } from 'rebass'
+import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import './App.css';
 import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
+import { Provider, Flex, Box, Text, Toolbar } from 'rebass'
 
 import Viewer from './viewer.js';
 import Editor from './editor.js';
@@ -59,41 +59,43 @@ class App extends Component {
 
   render = () => {
     return (
-      <Router>
-        <div className="App">
-          <div className="sidebar">
-            {this.renderIndexNode(this.state.index)}
-          </div>
-          <div className="content">
-            <Switch>
-              <Route exact path="/settings" render={(props) => {
-                return <h1>settings</h1>;
-              }}/>
+      <Provider>
+        <Router>
+          <Flex className="App">
+            <Box w={1/6} className="sidebar">
+              <Toolbar className="sidebar-toolbar">
+                <Text>sidebar toolbar</Text>
+              </Toolbar> 
+              {this.renderIndexNode(this.state.index)}
+            </Box>
+            <Box w={5/6} className="content">
+              <Switch>
+                <Route exact path="/settings" render={(props) => {
+                  return <h1>settings</h1>;
+                }}/>
 
-              <Route path="/edit/*" render={(props) => {
-                let path = '/'+ props.match.params[0];
-                if (path.endsWith(".md") === false) {
-                  path += (path.endsWith('/') ? '' : '/') + "index.md";
-                }
+                <Route path="/edit/*" render={(props) => {
+                  let path = '/'+ props.match.params[0];
+                  if (path.endsWith(".md") === false) {
+                    path += (path.endsWith('/') ? '' : '/') + "index.md";
+                  }
 
-                return <Editor provider={this.provider} path={path}/>
-              }}/>
+                  return <Editor provider={this.provider} path={path}/>
+                }}/>
 
-              <Route path="/*" render={(props) => {
-                let path = '/'+ props.match.params[0];
-                if (path.endsWith(".md") === false) {
-                  path += (path.endsWith('/') ? '' : '/') + "index.md";
-                }
+                <Route path="/*" render={(props) => {
+                  let path = '/'+ props.match.params[0];
+                  if (path.endsWith(".md") === false) {
+                    path += (path.endsWith('/') ? '' : '/') + "index.md";
+                  }
 
-                return <div>
-                  <div><Link to={"/edit"+path}>Edit</Link></div>
-                  <Viewer provider={this.provider} path={path}/>
-                </div>
-              }}/>
-            </Switch>
-          </div>
-        </div>
-      </Router>
+                  return <Viewer provider={this.provider} path={path}/>
+                }}/>
+              </Switch>
+            </Box>
+          </Flex>
+        </Router>
+      </Provider>   
     );
   }
 }

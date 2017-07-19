@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
+import ReactDOM from 'react-dom';
 import { Flex, Box } from 'rebass';
 import Marked from 'marked';
+import { Input, Toolbar, NavLink } from 'rebass'
 
 class Editor extends Component {
   constructor() {
@@ -14,6 +17,20 @@ class Editor extends Component {
   
   componentDidMount() {
     this.renderFile(this.props.path);
+
+    this.editDOM = ReactDOM.findDOMNode(this.refs.edit)
+    this.previewDOM = ReactDOM.findDOMNode(this.refs.preview)
+    //this.previewDOM.addEventListener('scroll', this._handleScroll.bind(this));
+    this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
+
+  }
+
+  _handleScroll = (ev) => {
+    const scrollEle = ev.srcElement;
+    const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
+    const pct = scrollEle.scrollTop / (scrollEle.scrollHeight - scrollEle.clientHeight);
+    otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
+    
   }
   
   renderFile = (path) => {
@@ -45,8 +62,19 @@ class Editor extends Component {
   
   render() {
     return <div>
-      <textarea className="page" onChange={this.onChange} value={this.state.body}></textarea>
-      <div className="page preview" dangerouslySetInnerHTML={{__html: this.state.preview}}></div>
+      <Toolbar className="view-toolbar">
+        <Input defaultValue={this.props.path} placeholder='Title'/>
+        <NavLink is={Link} to={this.props.path} ml='auto'>Cancel</NavLink>
+        <NavLink>Save</NavLink>
+      </Toolbar> 
+      <Flex className="editor-area">
+        <Box w={6/10}>
+          <textarea ref="edit" className="page" onChange={this.onChange} value={this.state.body}></textarea>
+        </Box>
+        <Box w={4/10}>
+          <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: this.state.preview}}></div>
+        </Box>
+      </Flex>
     </div>
   }
 }

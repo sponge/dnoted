@@ -12,6 +12,7 @@ if (parsedHash['access_token'] !== undefined) {
   for (const key in parsedHash) {
     localStorage.setItem(key, parsedHash[key]);
   }
+  document.location.hash = '';
 }
 
 if (localStorage["access_token"] === undefined) {
@@ -20,7 +21,6 @@ if (localStorage["access_token"] === undefined) {
   window.location.href = authUrl;
   //document.write(`<a href="${authUrl}">auth</a>`);
 } else {
-  window.location.hash = '';
   ReactDOM.render(<App />, document.getElementById('root'));
 }
 

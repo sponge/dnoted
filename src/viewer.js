@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { Text, Toolbar, NavLink } from 'rebass'
+import { Link } from 'react-router-dom'
 import Marked from 'marked';
+import { Flex, Box } from 'rebass';
 
 class Viewer extends Component {
   constructor() {
@@ -31,7 +34,14 @@ class Viewer extends Component {
   }
 
   render() {
-    return <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} />;
+    return <div>
+      <Toolbar className="view-toolbar">
+        <Text>{this.props.path}</Text>
+        <NavLink ml='auto'>Revisions</NavLink>
+        <NavLink is={Link} to={"/edit"+this.props.path}>Edit</NavLink>
+      </Toolbar>
+      {this.state.body.length ? <div className="read page" dangerouslySetInnerHTML={{__html: this.state.body}} /> : null}
+    </div>
   }
 }
 
