@@ -54,6 +54,7 @@ class DropboxProvider extends EventEmitter {
           resolve({
             name: response.name,
             text: reader.target.result,
+            path: response.path_lower,
             rev: response.rev
           });
         });

@@ -23,7 +23,7 @@ class Viewer extends Component {
     this.props.provider.getTextContents(path).then((file) => {
       this.setState({
         body: Marked(file.text),
-        filename: file.name,
+        filename: file.name.replace('.md',''),
         rev: file.rev
       });
     })

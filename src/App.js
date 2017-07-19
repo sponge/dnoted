@@ -41,7 +41,7 @@ class App extends Component {
       const files = _.map(Array.from(subnode.files), (id) => {
         const file = this.state.byId.get(id);
         return <li key={file.id} data-id={file.id}>
-          <Link to={file.path_lower}>{file.name}</Link>
+          <Link to={file.path_lower}>{file.name.replace('.md','')}</Link>
           </li>;
       });
 

@@ -39,6 +39,7 @@ class Editor extends Component {
     this.props.provider.getTextContents(path).then((file) => {
       this.setState({
         body: file.text,
+        name: file.path,
         filename: file.name,
         rev: file.rev
       });
@@ -59,14 +60,13 @@ class Editor extends Component {
 
   saveFile = (event) => {
     let move = new Promise((a) => a())
-    const newPath = this.props.path.split('/').slice(0,-1).join('/')+'/'+this.state.filename;
     
-    if (!this.props.path.endsWith(this.state.filename)) {
-      move = this.props.provider.movePath(this.props.path, newPath);
+    if (this.props.path !== this.state.name) {
+      move = this.props.provider.movePath(this.props.path, this.state.name);
     }
 
     move.then(() => {
-      return this.props.provider.setTextContents(newPath, this.state.body);
+      return this.props.provider.setTextContents(this.state.name, this.state.body);
     }).then(() => {
       // FIXME: redirect if renamed
       console.log('success?');
@@ -80,7 +80,7 @@ class Editor extends Component {
 
   onNameChange = (event) => {
     this.setState({
-      filename: event.target.value
+      name: event.target.value
     })
   }
   
@@ -104,7 +104,7 @@ class Editor extends Component {
     const newerRevision = this.props.latestRev !== null && this.state.rev !== null && this.props.latestRev !== this.state.rev;
     return <Flex direction="column">
       <Toolbar className="view-toolbar">
-        <Input onChange={this.onNameChange} value={this.state.filename} placeholder='Title'/>
+        <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
         <NavLink is={Link} to={this.props.path} ml='auto'>Cancel</NavLink>
         {newerRevision ? <NavLink onClick={this.reloadFile}>Reload Latest</NavLink> : null}
         <NavLink onClick={this.saveFile}>Save</NavLink>
