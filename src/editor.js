@@ -10,14 +10,18 @@ class Editor extends Component {
     super();
     
     this.state = {
-      filename: "",
-      body: "",
+      name: '',
+      body: '',
       rev: null,
-      preview: ""
+      preview: ''
     }
   }
   
   componentDidMount() {
+    this.setState({
+      name: this.props.path
+    });
+
     this.renderFile(this.props.path);
 
     // FIXME: attach keyboard shortcuts
@@ -30,6 +34,14 @@ class Editor extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.path !== nextProps.path) {
+      this.setState({
+        name: nextProps.path
+      });
+    }
+  }
+
   _handleScroll = (ev) => {
     const scrollEle = ev.srcElement;
     const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
@@ -38,11 +50,14 @@ class Editor extends Component {
   }
   
   renderFile = (path) => {
+    if (this.props.newFile) {
+      return;
+    }
+    
     this.props.provider.getTextContents(path).then((file) => {
       this.setState({
         body: file.text,
         name: file.path,
-        filename: file.name,
         rev: file.rev
       });
     })
@@ -62,17 +77,30 @@ class Editor extends Component {
   }
 
   saveFile = (event) => {
+    if (!this.state.name) {
+      alert('Please specify a filename before saving.');
+      return;
+    }
+
     let move = new Promise((a) => a())
+    let renamed = false;
+
+    let savePath = this.state.name.endsWith('.md') ? this.state.name : this.state.name+'.md';
+    savePath = savePath.startsWith('/') ? savePath : '/'+savePath;
     
-    if (this.props.path !== this.state.name) {
-      move = this.props.provider.movePath(this.props.path, this.state.name);
+    if (this.props.path !== savePath && !this.props.newFile) {
+      move = this.props.provider.movePath(this.props.path, savePath);
+      renamed = true;
     }
 
     move.then(() => {
-      return this.props.provider.setTextContents(this.state.name, this.state.body);
+      return this.props.provider.setTextContents(savePath, this.state.body);
     }).then(() => {
-      // FIXME: redirect if renamed
-      console.log('success?');
+      if (renamed) {
+        this.props.history.replace('/edit'+savePath);
+      }
+
+      this.props.history.push(savePath);
     }).catch((error) => {
       // FIXME: error handling
       console.log(error);
@@ -85,7 +113,7 @@ class Editor extends Component {
     })
   }
   
-  onChange = (event) => {
+  onBodyChange = (event) => {
     this.setState({
       body: event.target.value
     });
@@ -106,13 +134,13 @@ class Editor extends Component {
     return <Flex direction="column">
       <Toolbar className="view-toolbar">
         <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
-        <NavLink is={Link} to={this.props.path} ml='auto'>Cancel</NavLink>
+        <NavLink is={Link} to={this.props.path ? this.props.path : '/'} ml='auto'>Cancel</NavLink>
         {newerRevision ? <NavLink onClick={this.reloadFile}>Reload Latest</NavLink> : null}
         <NavLink onClick={this.saveFile}>Save</NavLink>
       </Toolbar> 
-      {this.state.body ? <Flex className="editor-area">
+      {(this.state.body || this.props.newFile) ? <Flex className="editor-area">
         <Box w={6/10}>
-          <textarea ref="edit" className="page" onChange={this.onChange} value={this.state.body}></textarea>
+          <textarea ref="edit" className="page" onChange={this.onBodyChange} value={this.state.body}></textarea>
         </Box>
         <Box w={4/10}>
           <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: this.state.preview}}></div>

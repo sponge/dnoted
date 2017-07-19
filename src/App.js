@@ -4,7 +4,7 @@ import './App.css';
 import DropboxProvider from './dropboxprovider.js';
 import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
-import { Provider, Flex, Box, Text, Toolbar } from 'rebass'
+import { Provider, Flex, Box, Text, Toolbar, NavLink } from 'rebass'
 
 import Viewer from './viewer.js';
 import Editor from './editor.js';
@@ -75,19 +75,23 @@ class App extends Component {
           <Flex className="App">
             <Box w={1/6} className="sidebar">
               <Toolbar className="sidebar-toolbar">
-                <Text>sidebar toolbar</Text>
+                <NavLink is={Link} to='/new'>+</NavLink>
               </Toolbar> 
               {this.renderIndexNode(this.state.index)}
             </Box>
             <Box w={5/6} className="content">
               <Switch>
+                <Route exact path="/new" render={(props) => {
+                  return <Editor history={props.history} provider={this.provider} newFile={true}/>
+                }}/>
+
                 <Route path="/edit/*" render={(props) => {
                   const path = this.getFilePath(props);
                   const id = this.state.byPath.get(path);
                   const editFile = this.state.byId.get(id);
                   const rev = editFile ? editFile.rev : null;
 
-                  return <Editor provider={this.provider} path={path} latestRev={rev}/>
+                  return <Editor history={props.history} provider={this.provider} path={path} latestRev={rev}/>
                 }}/>
 
                 <Route path="/*" render={(props) => {
@@ -96,7 +100,7 @@ class App extends Component {
                   const editFile = this.state.byId.get(id);
                   const rev = editFile ? editFile.rev : null;
 
-                  return <Viewer provider={this.provider} path={path} latestRev={rev}/>
+                  return <Viewer history={props.history} provider={this.provider} path={path} latestRev={rev}/>
                 }}/>
               </Switch>
             </Box>
