@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import './App.css';
-import DropboxProvider from './dropboxprovider.js';
-import IndexBuilder from './indexbuilder.js';
 import _ from 'lodash';
 import { Provider, Flex, Box, Text, Toolbar, NavLink } from 'rebass'
+import { createStore } from 'redux'
+import { Provider as ReduxProvider } from 'react-redux'
+
+import DropboxProvider from './dropboxprovider.js';
+import IndexBuilder from './indexbuilder.js';
 
 import Viewer from './viewer.js';
 import Editor from './editor.js';
