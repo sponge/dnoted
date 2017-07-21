@@ -43,7 +43,9 @@ class Editor extends Component {
   }
 
   componentWillMount() {
-    this.props.viewFile(this.props.path);
+    if (this.props.path) {
+      this.props.viewFile(this.props.path);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -89,7 +91,7 @@ class Editor extends Component {
         {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}
         <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
       </Toolbar> 
-      {this.state.text ? <Flex className="editor-area">
+      {!this.props.isLoading ? <Flex className="editor-area">
         <Box w={6/10}>
           <textarea ref="edit" className="page" onChange={this.onTextChange} value={this.state.text}></textarea>
         </Box>

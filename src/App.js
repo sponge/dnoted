@@ -12,7 +12,7 @@ import DropboxProvider from './dropboxprovider.js';
 
 import { ConnectedSidebar } from './sidebar.js';
 import { ConnectedViewer } from './viewer.js';
-import { ConnectedEditor, Editor } from './editor.js';
+import { ConnectedEditor } from './editor.js';
 
 import * as Actions from './actions'
 import rootReducer from './reducers'
@@ -91,7 +91,7 @@ class App extends Component {
               <Box w={5/6} className="content">
                 <Switch>
                   <Route exact path="/new" render={(props) => {
-                    return <Editor history={props.history} provider={this.provider} newFile={true}/>
+                    return <ConnectedEditor onClickCancel={() => props.history.go(-1)} onClickSave={this.saveFile}/>
                   }}/>
 
                   <Route path="/edit/*" render={(props) => {
