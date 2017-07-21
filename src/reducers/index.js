@@ -4,29 +4,45 @@ import _ from 'lodash';
 const viewer = (state = {}, action) => {
   let newState;
   switch (action.type) {
+    case 'RELOAD_FILE_PENDING':
+      newState = {
+        isLoading: true,
+      };
+      return {...state, ...newState};
+
     case 'VIEW_FILE_PENDING':
       newState = {
         isLoading: true,
+        isLoaded: false,
         error: false
       };
       return newState;
 
-    case 'UPDATE_INDEX':
-      console.log('FIXME: check if im on the right revision');
-      return state;
-
+    case 'RELOAD_FILE_FULFILLED':
     case 'VIEW_FILE_FULFILLED':
       newState = {
         isLoading: false,
+        isLoaded: true,
+        latestRev: action.payload.rev
       };
       return { ...state, ...newState, ...action.payload};
 
     case 'VIEW_FILE_REJECTED':
       newState = {
           isLoading: false,
+          isLoaded: false,
           error: true
         }
       return newState;
+
+    case 'UPDATE_INDEX':
+      const ns = {};
+      const currentFile = action.updates.filter((item) => item.path_lower === state.path);
+      if (currentFile.length) {
+        ns.latestRev = currentFile[0].rev;
+      }
+
+      return {...state, ...ns};
 
     default:
       return state;
@@ -104,7 +120,6 @@ const index = (state = initialState, action) => {
       _(action.updates).filter({'.tag': 'folder'}).forEach((folder) => {
         let node = findNodeForPath(ns.tree, folder.path_lower);
 
-        // FIXME: duplicate code
         let newFolder = {
           id: folder.id,
           name: folder.name,
