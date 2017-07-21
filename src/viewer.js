@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Text, Toolbar, NavLink } from 'rebass'
 import Marked from 'marked';
-import { Flex, Box } from 'rebass';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 class Viewer extends Component {
   static propTypes = {
@@ -14,8 +14,6 @@ class Viewer extends Component {
   }
 
   render() {
-    console.log(this.props);
-    // FIXME: disable button, pass in title from props?
     return <div>
       <Toolbar className="view-toolbar">
         {!this.props.isLoading ? <Text>{this.props.name}</Text> : null }
@@ -26,4 +24,26 @@ class Viewer extends Component {
   }
 }
 
-export default Viewer;
+const mapStateToProps = state => {
+  return {
+    isLoading: state.viewer.isLoading,
+    name: state.viewer.name,
+    path: state.viewer.path,
+    text: state.viewer.text
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    // onTodoClick: id => {
+    //   dispatch(toggleTodo(id))
+    // }
+  }
+}
+
+const ConnectedViewer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Viewer)
+
+export {ConnectedViewer, Viewer};

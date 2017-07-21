@@ -83,7 +83,7 @@ class DropboxProvider extends EventEmitter {
 
   _fileslistFolderHandler = (response) => {
     this.cursor = response.cursor;
-    this.emit("update", response.entries)
+    this.emit("update", response.entries);
     setTimeout(this._waitForUpdate, 0);
   }
 
