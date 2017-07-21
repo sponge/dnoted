@@ -131,8 +131,6 @@ const index = (state = initialState, action) => {
           indexId: null
         };
 
-        // FIXME: check if an index exists
-
         node.children[newFolder.name] = newFolder;
         ns.byId[folder.id] = newFolder;
         ns.byPath[folder.path_lower] = newFolder.id;
