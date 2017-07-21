@@ -84,7 +84,6 @@ const initialState = {
 const index = (state = initialState, action) => {
   switch (action.type) {
     case 'UPDATE_INDEX':
-      console.log('in update_index on index reducer', state, action);
       const ns = {...state};
 
       // handle file deletes

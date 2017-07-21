@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import PropTypes from 'prop-types';
+import { Route, Link, Switch } from 'react-router-dom'
 import './App.css';
 import { Provider, Flex, Box, Toolbar, NavLink } from 'rebass'
 
@@ -30,6 +31,10 @@ class App extends Component {
     });
   }
 
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+
   getFilePath(props) {
     let path = '/'+ props.match.params[0];
     if (path.endsWith(".md") === false) {
@@ -39,19 +44,22 @@ class App extends Component {
     return path;
   }
 
+  onSidebarClick = (path) => {
+    this.context.router.history.push(path);
+  }
+
   render = () => {
     // FIXME: this is starting to get big and ugly. move them out to separate components
     // FIXME: toolbars not affixing to top of page
     return (
       <ReduxProvider store={store}>
         <Provider>
-          <Router>
             <Flex className="App">
               <Box w={1/6} className="sidebar">
                 <Toolbar className="sidebar-toolbar">
                   <NavLink is={Link} to='/new'>+</NavLink>
                 </Toolbar> 
-                <ConnectedSidebar/>
+                <ConnectedSidebar onNodeClick={this.onSidebarClick}/>
               </Box>
               <Box w={5/6} className="content">
                 <Switch>
@@ -77,7 +85,6 @@ class App extends Component {
                 </Switch>
               </Box>
             </Flex>
-          </Router>
         </Provider>
       </ReduxProvider>
     );

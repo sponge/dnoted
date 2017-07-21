@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -8,6 +7,11 @@ class Sidebar extends Component {
   static propTypes = {
     tree: PropTypes.object.isRequired,
     byId: PropTypes.object.isRequired,
+    onNodeClick: PropTypes.func.isRequired
+  }
+
+  onNodeClick = (ev) => {
+    this.props.onNodeClick(ev.target.getAttribute('data-link'));
   }
 
 // return a list of folders and files recursively
@@ -16,13 +20,13 @@ class Sidebar extends Component {
     const files = _.map(subnode.files, (id) => {
       const file = this.props.byId[id];
       return <li key={file.id} data-id={file.id}>
-        <Link to={file.path_lower}>{file.name.replace('.md','')}</Link>
+        <span onClick={this.onNodeClick} data-link={file.path_lower}>{file.name.replace('.md','')}</span>
         </li>;
     });
 
     return <ul key={subnode.id}>
       <li>
-        {subnode.indexId ? <Link to={subnode.path_lower}>{subnode.name}</Link> : subnode.name}
+        {subnode.indexId ? <span onClick={this.onNodeClick} data-link={subnode.path_lower}>{subnode.name}</span> : <span className="disabled">{subnode.name}</span>}
         {subeles}
         <ul>{files}</ul>
       </li>

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
@@ -21,7 +22,7 @@ if (localStorage["access_token"] === undefined) {
   window.location.href = authUrl;
   //document.write(`<a href="${authUrl}">auth</a>`);
 } else {
-  ReactDOM.render(<App />, document.getElementById('root'));
+  ReactDOM.render(<Router><App /></Router>, document.getElementById('root'));
 }
 
 registerServiceWorker();
