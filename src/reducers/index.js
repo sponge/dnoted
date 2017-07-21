@@ -55,13 +55,11 @@ function findNodeForPath(node, path) {
 }
 
 function deleteItem(arr, item) {
-  const id = arr.findIndex(item);
+  const id = arr.indexOf(item);
   if (id === -1) {
-    console.warn('no item to delete', arr, item);
     return false;
   }
   arr.splice(id, 1);
-  console.log('found item to delete', arr, item);
   return true;
 }
 
@@ -98,8 +96,8 @@ const index = (state = initialState, action) => {
         }
         delete item.parent.children[removed.name];
         deleteItem(item.parent.files, id);
-        deleteItem(ns.byId, id);
-        deleteItem(ns.byPath, removed.path_lower);
+        delete ns.byId[id];
+        delete ns.byPath[removed.path_lower];
       });
 
       // add all new folders first because they need to exist before we add files in
