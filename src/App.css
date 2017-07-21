@@ -50,8 +50,8 @@ textarea.page {
 }
 
 .App .content .page.read {
-    padding: 2em 6em;
-    margin: 0 auto;
+    padding: 4em 6em;
+    margin: 2em auto;
     box-shadow: 5px 5px 20px #2a2a2a; 
     max-width: 700px;
 }

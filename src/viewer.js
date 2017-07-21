@@ -3,7 +3,7 @@ import { Text, Toolbar, NavLink } from 'rebass'
 import Marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { reloadFile } from './actions'
+import { viewFile, reloadFile } from './actions'
 
 
 class Viewer extends Component {
@@ -14,11 +14,20 @@ class Viewer extends Component {
     rev: PropTypes.string,
     latestRev: PropTypes.string,
     isLoading: PropTypes.bool,
+    viewFile: PropTypes.func.isRequired,
     onClickEdit: PropTypes.func.isRequired,
     onNewVersion: PropTypes.func.isRequired
   }
 
+  componentWillMount() {
+    this.props.viewFile(this.props.path);
+  }
+
   componentWillReceiveProps(nextProps) {
+    if (nextProps.path !== this.props.path) {
+      this.props.viewFile(nextProps.path);
+    }
+
     if (nextProps.latestRev !== nextProps.rev) {
       this.props.onNewVersion(nextProps.path);
     }
@@ -40,7 +49,6 @@ const mapStateToProps = state => {
   return {
     isLoading: state.viewer.isLoading,
     name: state.viewer.name,
-    path: state.viewer.path,
     text: state.viewer.text,
     rev: state.viewer.rev,
     latestRev: state.viewer.latestRev
@@ -49,7 +57,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onNewVersion: path => dispatch(reloadFile(path))
+    onNewVersion: path => dispatch(reloadFile(path)),
+    viewFile: path => dispatch(viewFile(path))
   }
 }
 
