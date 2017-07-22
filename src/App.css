@@ -21,9 +21,13 @@
     margin-right: 1em;
 }
 
+.App .sidebar > ul > li {
+    padding-top: 1em;
+}
+
 .App .sidebar ul {
     list-style-type: none;
-    margin: 0;
+    margin: 0.3em 0 0 0;
     padding: 0 0 0 1em;
 }
 

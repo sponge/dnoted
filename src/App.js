@@ -47,35 +47,39 @@ class App extends Component {
   }
 
   saveFile = (file) => {
-    console.log('save file', file);
-    // if (!this.state.name) {
-    //   alert('Please specify a filename before saving.');
-    //   return;
-    // }
+    const history = this.context.router.history;
 
-    // let move = new Promise((a) => a())
-    // let renamed = false;
+    if (!file.name || !file.name.length) {
+      alert('Please specify a filename before saving.');
+      return;
+    }
 
-    // let savePath = this.state.name.endsWith('.md') ? this.state.name : this.state.name+'.md';
-    // savePath = savePath.startsWith('/') ? savePath : '/'+savePath;
+    store.dispatch(Actions.startLoading());
+
+    let move = new Promise((a) => a())
+    let renamed = false;
+
+    let savePath = file.name.endsWith('.md') ? file.name : file.name+'.md';
+    savePath = savePath.startsWith('/') ? savePath : '/'+savePath;
     
-    // if (this.props.path !== savePath && !this.props.newFile) {
-    //   move = this.props.provider.movePath(this.props.path, savePath);
-    //   renamed = true;
-    // }
+    if (file.path !== savePath) {
+      move = this.provider.movePath(file.path, savePath);
+      renamed = true;
+    }
 
-    // move.then(() => {
-    //   return this.props.provider.setTextContents(savePath, this.state.body);
-    // }).then(() => {
-    //   if (renamed) {
-    //     this.props.history.replace('/edit'+savePath);
-    //   }
+    move.then(() => {
+      return this.provider.setTextContents(savePath, file.text);
+    }).then(() => {
+      if (renamed) {
+        history.replace('/edit'+savePath);
+      }
 
-    //   this.props.history.push(savePath);
-    // }).catch((error) => {
-    //   // FIXME: error handling
-    //   console.log(error);
-    // });
+      history.push(savePath);
+    }).catch((error) => {
+      // FIXME: error handling
+      console.log(error);
+      store.dispatch(Actions.stopLoading());
+    });
   }
 
   render = () => {

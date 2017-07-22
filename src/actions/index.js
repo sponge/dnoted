@@ -8,3 +8,11 @@ export const reloadFile = createAction('RELOAD_FILE', provider.getTextContents);
 export function updateFileIndex(updates) {
     return { type: 'UPDATE_INDEX', updates };
 }
+
+export function startLoading() {
+    return { type: 'LOADING_START' };
+}
+
+export function stopLoading() {
+    return { type: 'LOADING_END' };
+}

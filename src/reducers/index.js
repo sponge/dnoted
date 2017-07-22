@@ -25,7 +25,7 @@ const viewer = (state = {}, action) => {
         isLoaded: true,
         latestRev: action.payload.rev
       };
-      return { ...state, ...newState, ...action.payload};
+      return {...state, ...newState, ...action.payload};
 
     case 'VIEW_FILE_REJECTED':
       newState = {
@@ -34,6 +34,14 @@ const viewer = (state = {}, action) => {
           error: true
         }
       return newState;
+
+    case 'LOADING_START':
+    case 'LOADING_END':
+      newState = {
+        isLoading: action.type === 'LOADING_START'
+      }
+
+      return {...state, ...newState};
 
     case 'UPDATE_INDEX':
       const ns = {};
