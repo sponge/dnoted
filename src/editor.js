@@ -6,6 +6,7 @@ import Marked from 'marked';
 import { Input, Toolbar, NavLink } from 'rebass'
 import { connect } from 'react-redux';
 import { viewFile, reloadFile } from './actions'
+import FA from 'react-fontawesome';
 
 class Editor extends Component {
   static propTypes = {
@@ -86,6 +87,7 @@ class Editor extends Component {
     const newerRevision = this.props.latestRev !== this.props.rev;
     return <Flex direction="column">
       <Toolbar className="view-toolbar">
+        <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
         <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
         <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>
         {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}

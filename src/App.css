@@ -9,6 +9,18 @@
     /* background-color: rgba(0,90,0,255); */
 }
 
+.sidebar-toolbar .fa {
+    font-size: 150%;
+}
+.App .sidebar ul .fa {
+    font-size: 80%;
+    vertical-align: 1px;
+}
+
+.view-toolbar .fa {
+    margin-right: 1em;
+}
+
 .App .sidebar ul {
     list-style-type: none;
     margin: 0;

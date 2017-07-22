@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Link, Switch } from 'react-router-dom'
 import './App.css';
+import 'font-awesome/css/font-awesome.css'
+import FA from 'react-fontawesome';
 import { Provider, Flex, Box, Toolbar, NavLink } from 'rebass'
 
 import { createStore, applyMiddleware } from 'redux'
@@ -84,7 +86,7 @@ class App extends Component {
             <Flex className="App">
               <Box w={1/6} className="sidebar">
                 <Toolbar className="sidebar-toolbar">
-                  <NavLink is={Link} to='/new'>+</NavLink>
+                  <NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>
                 </Toolbar> 
                 <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
               </Box>
