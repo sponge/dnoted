@@ -19,7 +19,8 @@ class Editor extends Component {
     viewFile: PropTypes.func.isRequired,
     onClickCancel: PropTypes.func.isRequired,
     onClickReload: PropTypes.func.isRequired,
-    onClickSave: PropTypes.func.isRequired
+    onClickSave: PropTypes.func.isRequired,
+     onClickMenu: PropTypes.func.isRequired
   }
   
   constructor() {
@@ -87,6 +88,7 @@ class Editor extends Component {
     const newerRevision = this.props.latestRev !== this.props.rev;
     return <Flex direction="column">
       <Toolbar className="view-toolbar">
+        <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
         <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
         <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
         <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>

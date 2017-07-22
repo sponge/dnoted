@@ -26,8 +26,11 @@ class App extends Component {
   constructor() {
     super();
 
-    this.provider = new DropboxProvider(localStorage['access_token']);
+    this.state = {
+      hideNav: false
+    };
 
+    this.provider = new DropboxProvider(localStorage['access_token']);
     this.provider.on("update", (updates) => {
       store.dispatch(Actions.updateFileIndex(updates));
     });
@@ -82,32 +85,36 @@ class App extends Component {
     });
   }
 
+  onClickMenu = () => {
+    this.setState({hideNav: !this.state.hideNav});
+  }
+
   render = () => {
     // FIXME: toolbars not affixing to top of page
     return (
       <ReduxProvider store={store}>
         <Provider>
             <Flex className="App">
-              <Box w={1/6} className="sidebar">
+              <Box style={this.state.hideNav ? {display: 'none'} : {}} w={1/6} className="sidebar">
                 <Toolbar className="sidebar-toolbar">
                   <NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>
                 </Toolbar> 
                 <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
               </Box>
-              <Box w={5/6} className="content">
+              <Box w={(this.state.hideNav ? 6:5)/6} className="content">
                 <Switch>
                   <Route exact path="/new" render={(props) => {
-                    return <ConnectedEditor onClickCancel={() => props.history.go(-1)} onClickSave={this.saveFile}/>
+                    return <ConnectedEditor onClickMenu={this.onClickMenu} onClickCancel={() => props.history.go(-1)} onClickSave={this.saveFile}/>
                   }}/>
 
                   <Route path="/edit/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedEditor path={path} onClickCancel={() => props.history.push(path)} onClickSave={this.saveFile}/>
+                    return <ConnectedEditor onClickMenu={this.onClickMenu} path={path} onClickCancel={() => props.history.push(path)} onClickSave={this.saveFile}/>
                   }}/>
 
                   <Route path="/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedViewer path={path} onClickEdit={() => props.history.push("/edit"+path)}/>
+                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onClickEdit={() => props.history.push("/edit"+path)}/>
                   }}/>
                 </Switch>
               </Box>

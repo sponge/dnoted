@@ -16,7 +16,8 @@ class Viewer extends Component {
     isLoading: PropTypes.bool,
     viewFile: PropTypes.func.isRequired,
     onClickEdit: PropTypes.func.isRequired,
-    onNewVersion: PropTypes.func.isRequired
+    onNewVersion: PropTypes.func.isRequired,
+    onClickMenu: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -36,6 +37,7 @@ class Viewer extends Component {
   render() {
     return <div>
       <Toolbar className="view-toolbar">
+        <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
         <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
         {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
         {!this.props.isLoading ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
