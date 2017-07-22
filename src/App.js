@@ -95,7 +95,7 @@ class App extends Component {
       <ReduxProvider store={store}>
         <Provider>
             <Flex className="App">
-              <Box style={this.state.hideNav ? {display: 'none'} : {}} w={1/6} className="sidebar">
+              <Box w={(this.state.hideNav ? 0:1)/6} className="sidebar">
                 <Toolbar className="sidebar-toolbar">
                   <NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>
                 </Toolbar> 

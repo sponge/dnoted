@@ -35,6 +35,19 @@ const viewer = (state = {}, action) => {
         }
       return newState;
 
+    case 'CLEAR_FILE':
+      newState = {
+        isLoading: false,
+        isLoaded: true,
+        latestRev: null,
+        name: "",
+        path: null,
+        rev: null,
+        text: ""
+      }
+
+      return {...state, ...newState};
+
     case 'LOADING_START':
     case 'LOADING_END':
       newState = {

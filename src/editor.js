@@ -5,7 +5,7 @@ import { Flex, Box } from 'rebass';
 import Marked from 'marked';
 import { Input, Toolbar, NavLink } from 'rebass'
 import { connect } from 'react-redux';
-import { viewFile, reloadFile } from './actions'
+import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
 
 class Editor extends Component {
@@ -16,11 +16,12 @@ class Editor extends Component {
     rev: PropTypes.string,
     latestRev: PropTypes.string,
     isLoading: PropTypes.bool,
+    newFile: PropTypes.func.isRequired,
     viewFile: PropTypes.func.isRequired,
     onClickCancel: PropTypes.func.isRequired,
     onClickReload: PropTypes.func.isRequired,
     onClickSave: PropTypes.func.isRequired,
-     onClickMenu: PropTypes.func.isRequired
+    onClickMenu: PropTypes.func.isRequired
   }
   
   constructor() {
@@ -47,10 +48,13 @@ class Editor extends Component {
   componentWillMount() {
     if (this.props.path) {
       this.props.viewFile(this.props.path);
+    } else {
+      this.props.newFile();
     }
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     if (nextProps.path !== this.props.path) {
       this.props.viewFile(nextProps.path);
     }
@@ -120,7 +124,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onClickReload: path => dispatch(reloadFile(path)),
-    viewFile: path => dispatch(viewFile(path))
+    viewFile: path => dispatch(viewFile(path)),
+    newFile: path => dispatch(clearFile())
   }
 }
 
