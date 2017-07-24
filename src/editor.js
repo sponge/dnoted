@@ -7,7 +7,11 @@ import { Input, Toolbar, NavLink } from 'rebass'
 import { connect } from 'react-redux';
 import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
-import {HotKeys} from 'react-hotkeys';
+
+import CodeMirror from 'react-codemirror';
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/railscasts.css';
 
 class Editor extends Component {
   static propTypes = {
@@ -37,13 +41,12 @@ class Editor extends Component {
   }
   
   componentDidMount() {
-    // FIXME: attach keyboard shortcuts
 
-    this.editDOM = ReactDOM.findDOMNode(this.refs.edit)
-    this.previewDOM = ReactDOM.findDOMNode(this.refs.preview)
-    if (this.editDOM && this.previewDOM) {
-      this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
-    }
+    // this.editDOM = ReactDOM.findDOMNode(this.refs.edit)
+    // this.previewDOM = ReactDOM.findDOMNode(this.refs.preview)
+    // if (this.editDOM && this.previewDOM) {
+    //   this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
+    // }
   }
 
   componentWillMount() {
@@ -69,12 +72,12 @@ class Editor extends Component {
     }
   }
 
-  _handleScroll = (ev) => {
-    const scrollEle = ev.srcElement;
-    const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
-    const pct = scrollEle.scrollTop / (scrollEle.scrollHeight - scrollEle.clientHeight);
-    otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
-  }
+  // _handleScroll = (ev) => {
+  //   const scrollEle = ev.srcElement;
+  //   const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
+  //   const pct = scrollEle.scrollTop / (scrollEle.scrollHeight - scrollEle.clientHeight);
+  //   otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
+  // }
 
   onNameChange = (event) => {
     this.setState({
@@ -82,91 +85,20 @@ class Editor extends Component {
     })
   }
   
-  onTextChange = (event) => {
+  onTextChange = (text) => {
     this.setState({
-      text: event.target.value
+      text: text
     });
   };
 
-  _wrapSelection(ev, tag) {
-    ev.preventDefault();
-
-    const ta = ev.target;
-    const start = ta.selectionStart;
-    let end = ta.selectionEnd;
-    if (start !== end && ta.value[end-1] === ' ') {
-      end -= 1;
-    }
-
-    let str;
-    if (start !== end) {
-      str = ta.value.substring(0, start) + tag + ta.value.substring(start, end) + tag + ta.value.substring(end);
-    } else {
-      str = ta.value.substring(0, start) + tag + ta.value.substring(start);
-    }
-
-    this.setState({
-      text: str
-    }, () => {
-      ta.selectionStart = ta.selectionEnd = end + tag.length + (start !== end ? tag.length : 0);
-    });
-  }
-
-  _startOfLine(ev, tag) {
-    ev.preventDefault();
-
-    const ta = ev.target;
-    let i = ta.selectionStart;
-    const carat = ta.selectionStart;
-    let str = ta.value;
-
-    while (i > 0) {
-      if (ta.value[i] !== '\n') {
-        i--;
-        continue;
-      }
-
-      i++;
-      str = ta.value.substring(0, i) + tag + ta.value.substring(i);
-      break;
-    }
-
-    this.setState({
-      text: str
-    }, () => {
-      ta.selectionStart = ta.selectionEnd = carat + tag.length;
-    });
-  }
-
-  handlers = {
-    'h1': (ev)  => this._startOfLine(ev, "# "),
-    'h2': (ev)  => this._startOfLine(ev, "## "),
-    'h3': (ev)  => this._startOfLine(ev, "### "),
-    'h4': (ev)  => this._startOfLine(ev, "#### "),
-    'h5': (ev)  => this._startOfLine(ev, "##### "),
-    'h6': (ev)  => this._startOfLine(ev, "###### "),
-    'bold': (ev) => this._wrapSelection(ev, "**"),
-    'italic': (ev) => this._wrapSelection(ev, "*"),
-    'code': (ev) => this._wrapSelection(ev, "`"),
-    'strikethrough': (ev) => this._wrapSelection(ev, "~~"),
-    'save': (ev) => { ev.preventDefault(); this.props.onClickSave(this.state); }
-  }
-
-  keymap = {
-    'h1': ['ctrl+1'],
-    'h2': ['ctrl+2'],
-    'h3': ['ctrl+3'],
-    'h4': ['ctrl+4'],
-    'h5': ['ctrl+5'],
-    'h6': ['ctrl+6'],
-    'bold': ['ctrl+b'],
-    'italic': ['ctrl+i'],
-    'code': ['ctrl+u'],
-    'save': ['ctrl+s'],
-    'strikethrough': ['ctrl+k']
-  }
   
   render() {
+		const options = {
+      lineNumbers: false,
+      mode: 'markdown',
+      theme: 'railscasts',
+      viewportMargin: Infinity
+		};
     const newerRevision = this.props.latestRev !== this.props.rev;
     return <Flex direction="column">
       <Toolbar className="view-toolbar">
@@ -179,9 +111,7 @@ class Editor extends Component {
       </Toolbar> 
       {!this.props.isLoading ? <Flex className="editor-area">
         <Box w={6/10}>
-          <HotKeys className="hotkeys" keyMap={this.keymap} handlers={this.handlers}>
-            <textarea ref="edit" className="page" onChange={this.onTextChange} value={this.state.text}></textarea>
-          </HotKeys>
+          <CodeMirror ref="edit" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/>
         </Box>
         <Box w={4/10}>
           <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: Marked(this.state.text)}}></div>

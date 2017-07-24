@@ -55,15 +55,8 @@
     background-color: #2C2C2C;
 }
 
-.hotkeys {
-    display: inline;
-}
-
-textarea.page {
-    box-sizing: border-box;
-    padding: 2em;
-    resize: none;
-    overflow: auto;
+.CodeMirror.page {
+    height: auto;
 }
 
 .App .content .page.read {

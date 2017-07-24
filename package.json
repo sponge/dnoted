@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "codemirror": "^5.28.0",
     "dropbox": "^2.5.4",
     "event-emitter-es6": "^1.1.5",
     "font-awesome": "^4.7.0",
@@ -10,6 +11,7 @@
     "marked": "^0.3.6",
     "query-string": "^4.3.4",
     "react": "^15.6.1",
+    "react-codemirror": "^1.0.0",
     "react-dom": "^15.6.1",
     "react-fontawesome": "^1.6.1",
     "react-hotkeys": "^0.10.0",
