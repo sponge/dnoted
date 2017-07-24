@@ -7,6 +7,7 @@ import { Input, Toolbar, NavLink } from 'rebass'
 import { connect } from 'react-redux';
 import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
+import {HotKeys} from 'react-hotkeys';
 
 class Editor extends Component {
   static propTypes = {
@@ -54,7 +55,6 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if (nextProps.path !== this.props.path) {
       this.props.viewFile(nextProps.path);
     }
@@ -87,6 +87,84 @@ class Editor extends Component {
       text: event.target.value
     });
   };
+
+  _wrapSelection(ev, tag) {
+    ev.preventDefault();
+
+    const ta = ev.target;
+    const start = ta.selectionStart;
+    let end = ta.selectionEnd;
+    if (start !== end && ta.value[end-1] === ' ') {
+      end -= 1;
+    }
+
+    let str;
+    if (start !== end) {
+      str = ta.value.substring(0, start) + tag + ta.value.substring(start, end) + tag + ta.value.substring(end);
+    } else {
+      str = ta.value.substring(0, start) + tag + ta.value.substring(start);
+    }
+
+    this.setState({
+      text: str
+    }, () => {
+      ta.selectionStart = ta.selectionEnd = end + tag.length + (start !== end ? tag.length : 0);
+    });
+  }
+
+  _startOfLine(ev, tag) {
+    ev.preventDefault();
+
+    const ta = ev.target;
+    let i = ta.selectionStart;
+    const carat = ta.selectionStart;
+    let str = ta.value;
+
+    while (i > 0) {
+      if (ta.value[i] !== '\n') {
+        i--;
+        continue;
+      }
+
+      i++;
+      str = ta.value.substring(0, i) + tag + ta.value.substring(i);
+      break;
+    }
+
+    this.setState({
+      text: str
+    }, () => {
+      ta.selectionStart = ta.selectionEnd = carat + tag.length;
+    });
+  }
+
+  handlers = {
+    'h1': (ev)  => this._startOfLine(ev, "# "),
+    'h2': (ev)  => this._startOfLine(ev, "## "),
+    'h3': (ev)  => this._startOfLine(ev, "### "),
+    'h4': (ev)  => this._startOfLine(ev, "#### "),
+    'h5': (ev)  => this._startOfLine(ev, "##### "),
+    'h6': (ev)  => this._startOfLine(ev, "###### "),
+    'bold': (ev) => this._wrapSelection(ev, "**"),
+    'italic': (ev) => this._wrapSelection(ev, "*"),
+    'code': (ev) => this._wrapSelection(ev, "`"),
+    'strikethrough': (ev) => this._wrapSelection(ev, "~~"),
+    'save': (ev) => { ev.preventDefault(); this.props.onClickSave(this.state); }
+  }
+
+  keymap = {
+    'h1': ['ctrl+1'],
+    'h2': ['ctrl+2'],
+    'h3': ['ctrl+3'],
+    'h4': ['ctrl+4'],
+    'h5': ['ctrl+5'],
+    'h6': ['ctrl+6'],
+    'bold': ['ctrl+b'],
+    'italic': ['ctrl+i'],
+    'code': ['ctrl+u'],
+    'save': ['ctrl+s'],
+    'strikethrough': ['ctrl+k']
+  }
   
   render() {
     const newerRevision = this.props.latestRev !== this.props.rev;
@@ -101,7 +179,9 @@ class Editor extends Component {
       </Toolbar> 
       {!this.props.isLoading ? <Flex className="editor-area">
         <Box w={6/10}>
-          <textarea ref="edit" className="page" onChange={this.onTextChange} value={this.state.text}></textarea>
+          <HotKeys className="hotkeys" keyMap={this.keymap} handlers={this.handlers}>
+            <textarea ref="edit" className="page" onChange={this.onTextChange} value={this.state.text}></textarea>
+          </HotKeys>
         </Box>
         <Box w={4/10}>
           <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: Marked(this.state.text)}}></div>

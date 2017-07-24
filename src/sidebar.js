@@ -21,13 +21,13 @@ class Sidebar extends Component {
     const files = _.map(subnode.files, (id) => {
       const file = this.props.byId[id];
       return <li key={file.id} data-id={file.id}>
-        <span onClick={this.onNodeClick} data-link={file.path_lower}><FA name="file-text"/> {file.name.replace('.md','')}</span>
+        <span onClick={this.onNodeClick} data-link={file.path_lower}><FA fixedWidth={true} name="file-text"/> {file.name.replace('.md','')}</span>
         </li>;
     });
 
     return <ul key={subnode.id}>
       <li>
-        {subnode.indexId ? <span onClick={this.onNodeClick} data-link={subnode.path_lower}><FA name="folder"/> {subnode.name}</span> : <span className="disabled"><FA name="folder-o"/> {subnode.name}</span>}
+        {subnode.indexId ? <span onClick={this.onNodeClick} data-link={subnode.path_lower}><FA fixedWidth={true} name="folder"/> {subnode.name}</span> : <span className="disabled"><FA fixedWidth={true} name="folder-o"/> {subnode.name}</span>}
         {subeles}
         <ul>{files}</ul>
       </li>

@@ -49,13 +49,14 @@
     /* background-color: rgba(90,0,0,64); */
 }
 
-.editor-area {
-}
-
 .App .content .page {
     font-size: 11pt;
     line-height: 1.5em;
     background-color: #2C2C2C;
+}
+
+.hotkeys {
+    display: inline;
 }
 
 textarea.page {
