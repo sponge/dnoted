@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { viewFile, reloadFile } from './actions'
 import FA from 'react-fontawesome';
+import ToolbarView from './toolbarview.js';
 
 class Viewer extends Component {
   static propTypes = {
@@ -35,15 +36,16 @@ class Viewer extends Component {
   }
 
   render() {
-    return <div>
-      <Toolbar className="view-toolbar">
-        <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
-        <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
-        {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
-        {!this.props.isLoading ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
-      </Toolbar>
+    const toolbar = <span>
+      <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
+      <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
+      {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
+      {!this.props.isLoading ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
+    </span>
+
+    return <ToolbarView toolbar={toolbar}>
       {this.props.text ? <div className="read page" dangerouslySetInnerHTML={{__html: Marked(this.props.text)}} /> : null}
-    </div>
+    </ToolbarView>
   }
 }
 

@@ -7,6 +7,7 @@ import { Input, Toolbar, NavLink } from 'rebass'
 import { connect } from 'react-redux';
 import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
+import ToolbarView from './toolbarview.js';
 
 import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/markdown/markdown';
@@ -41,12 +42,9 @@ class Editor extends Component {
   }
   
   componentDidMount() {
-
-    // this.editDOM = ReactDOM.findDOMNode(this.refs.edit)
-    // this.previewDOM = ReactDOM.findDOMNode(this.refs.preview)
-    // if (this.editDOM && this.previewDOM) {
-    //   this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
-    // }
+    this.editDOM = ReactDOM.findDOMNode(this.refs.editBox)
+    this.previewDOM = ReactDOM.findDOMNode(this.refs.previewBox)
+    this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
   }
 
   componentWillMount() {
@@ -72,12 +70,12 @@ class Editor extends Component {
     }
   }
 
-  // _handleScroll = (ev) => {
-  //   const scrollEle = ev.srcElement;
-  //   const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
-  //   const pct = scrollEle.scrollTop / (scrollEle.scrollHeight - scrollEle.clientHeight);
-  //   otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
-  // }
+  _handleScroll = (ev) => {
+    const scrollEle = ev.srcElement;
+    const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
+    const pct = scrollEle.scrollTop / (scrollEle.scrollHeight - scrollEle.clientHeight);
+    otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
+  }
 
   onNameChange = (event) => {
     this.setState({
@@ -100,24 +98,24 @@ class Editor extends Component {
       viewportMargin: Infinity
 		};
     const newerRevision = this.props.latestRev !== this.props.rev;
-    return <Flex direction="column">
-      <Toolbar className="view-toolbar">
-        <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
-        <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
-        <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
-        <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>
-        {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}
-        <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
-      </Toolbar> 
-      {!this.props.isLoading ? <Flex className="editor-area">
-        <Box w={6/10}>
-          <CodeMirror ref="edit" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/>
-        </Box>
-        <Box w={4/10}>
-          <div ref="preview" className="page preview" dangerouslySetInnerHTML={{__html: Marked(this.state.text)}}></div>
-        </Box>
-      </Flex> : null}
-    </Flex>
+
+    const toolbar = <span>
+      <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
+      <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
+      <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
+      <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>
+      {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}
+      <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
+    </span>
+
+    return <ToolbarView toolbar={toolbar}>
+      <Box w={6/10} ref="editBox" style={{overflowY: 'scroll'}}>
+        {!this.props.isLoading ? <CodeMirror className="page" onChange={this.onTextChange} value={this.state.text} options={options}/> : null }
+      </Box>
+      <Box w={4/10} ref="previewBox" style={{overflowY: 'hidden'}}>
+        {!this.props.isLoading ? <div className="page preview" dangerouslySetInnerHTML={{__html: Marked(this.state.text)}}></div> : null }
+      </Box>
+    </ToolbarView>
   }
 }
 

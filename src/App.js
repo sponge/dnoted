@@ -12,6 +12,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 
 import DropboxProvider from './dropboxprovider.js';
 
+import ToolbarView from './toolbarview.js';
 import { ConnectedSidebar } from './sidebar.js';
 import { ConnectedViewer } from './viewer.js';
 import { ConnectedEditor } from './editor.js';
@@ -96,10 +97,9 @@ class App extends Component {
         <Provider>
             <Flex className="App">
               <Box w={(this.state.hideNav ? 0:1)/6} className="sidebar">
-                <Toolbar className="sidebar-toolbar">
-                  <NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>
-                </Toolbar> 
-                <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
+                <ToolbarView toolbar={<NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>}>
+                  <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
+                </ToolbarView>
               </Box>
               <Box w={(this.state.hideNav ? 6:5)/6} className="content">
                 <Switch>

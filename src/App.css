@@ -4,7 +4,6 @@
 }
 
 .App .sidebar {
-    overflow: hidden;
     background-color: #2A2B2E;
     /* background-color: rgba(0,90,0,255); */
 }
@@ -44,19 +43,15 @@
     background-color: transparent;
 }
 
-.App .content {
-    overflow: auto;
-    /* background-color: rgba(90,0,0,64); */
-}
-
 .App .content .page {
     font-size: 11pt;
     line-height: 1.5em;
     background-color: #2C2C2C;
 }
 
-.CodeMirror.page {
-    height: auto;
+.CodeMirror {
+    box-sizing: border-box;
+    height: 100% !important;
 }
 
 .App .content .page.read {
@@ -68,7 +63,6 @@
 
 .App .content .page.preview {
     padding: 2em;
-    overflow: hidden;
 }
 
 .App .content input.revisions {
