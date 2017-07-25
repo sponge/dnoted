@@ -3,70 +3,65 @@
     height: 100vh;
 }
 
-.App .sidebar {
-    background-color: #2A2B2E;
-    /* background-color: rgba(0,90,0,255); */
-}
-
-.sidebar-toolbar .fa {
-    font-size: 150%;
-}
-.App .sidebar ul .fa {
-    font-size: 80%;
-    vertical-align: 1px;
-}
-
 .view-toolbar .fa {
     margin-right: 1em;
 }
 
-.App .sidebar > ul > li {
-    padding-top: 1em;
+.sidebar {
+    background-color: #2A2B2E;
+    /* background-color: rgba(0,90,0,255); */
 }
 
-.App .sidebar ul {
+.sidebar ul .fa {
+    font-size: 80%;
+    vertical-align: 1px;
+}
+
+.sidebar ul {
     list-style-type: none;
     margin: 0.3em 0 0 0;
     padding: 0 0 0 1em;
 }
 
-.App .sidebar ul span.disabled {
+.sidebar ul li {
+    margin: 0.5em 0 0 0;
+}
+
+.sidebar ul span.disabled {
     color: #666;
 }
 
-.App .sidebar ul span:hover {
-    background-color: #666;
-    cursor: default;
-}
-
-.App .sidebar ul span.disabled:hover {
+.sidebar ul span.disabled:hover {
     background-color: transparent;
 }
 
-.App .content .page {
+.sidebar ul span.disabled:hover span {
+    background-color: transparent;
+}
+
+.sidebar ul span:hover {
+    cursor: default;
+    background-color: #666;
+}
+
+.content .page {
     font-size: 11pt;
     line-height: 1.5em;
     background-color: #2C2C2C;
 }
 
-.CodeMirror {
-    box-sizing: border-box;
-    height: 100% !important;
-}
-
-.App .content .page.read {
+.content .page.read {
     padding: 4em 6em;
     margin: 2em auto;
     box-shadow: 5px 5px 20px #2a2a2a; 
     max-width: 700px;
 }
 
-.App .content .page.preview {
+.content .page.preview {
     padding: 2em;
 }
 
-.App .content input.revisions {
-    direction: rtl;
-    margin: 0 auto;
-    display: inline-block;
+.content .page .CodeMirror {
+    box-sizing: border-box;
+    height: 100% !important;
 }

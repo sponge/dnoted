@@ -91,7 +91,7 @@ class Editor extends Component {
 
   
   render() {
-		const options = {
+    const options = {
       lineNumbers: false,
       mode: 'markdown',
       theme: 'railscasts',
