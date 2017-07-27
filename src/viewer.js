@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Toolbar, NavLink } from 'rebass'
+import { Text, NavLink } from 'rebass'
 import Marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

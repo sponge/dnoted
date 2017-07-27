@@ -72,7 +72,7 @@ class DropboxProvider extends EventEmitter {
   setTextContents = (path, text) => {
     // FIXME: should probably pass something relevant back
     const filePromise = new Promise((resolve, reject) => {
-      this.dbx.filesUpload({ path: path, contents: text, mode:{'.tag': 'overwrite'} }).then((response) => {
+      this.dbx.filesUpload({ path: path, mute: true, contents: text, mode:{'.tag': 'overwrite'} }).then((response) => {
         resolve();
       })
       .catch(reject);

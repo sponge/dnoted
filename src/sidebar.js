@@ -13,6 +13,7 @@ class Sidebar extends Component {
 
   onNodeClick = (ev) => {
     this.props.onNodeClick(ev.target.getAttribute('data-link'));
+    return false;
   }
 
 // return a list of folders and files recursively
@@ -22,7 +23,7 @@ class Sidebar extends Component {
       const file = this.props.byId[id];
       return <li key={file.id} data-id={file.id}>
         <span onClick={this.onNodeClick} data-link={file.path_lower}><FA fixedWidth={true} name="file-text"/> {file.name.replace('.md','')}</span>
-        </li>;
+      </li>;
     });
 
     return <ul key={subnode.id}>

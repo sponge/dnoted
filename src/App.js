@@ -4,7 +4,7 @@ import { Route, Link, Switch } from 'react-router-dom'
 import './App.css';
 import 'font-awesome/css/font-awesome.css'
 import FA from 'react-fontawesome';
-import { Provider, Flex, Box, Toolbar, NavLink } from 'rebass'
+import { Provider, Flex, Box, NavLink } from 'rebass'
 
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -91,7 +91,6 @@ class App extends Component {
   }
 
   render = () => {
-    // FIXME: toolbars not affixing to top of page
     return (
       <ReduxProvider store={store}>
         <Provider>
