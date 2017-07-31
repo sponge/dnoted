@@ -1,6 +1,10 @@
 import { createAction } from 'redux-actions'
 import DropboxProvider from '../dropboxprovider.js';
-const provider = new DropboxProvider(localStorage['access_token']);
+
+let provider = {};
+if (localStorage.getItem('access_token')) {
+    provider = new DropboxProvider(localStorage.getItem('access_token'), localStorage.getItem('cursor'));
+}
 
 export const viewFile = createAction('VIEW_FILE', provider.getTextContents);
 export const reloadFile = createAction('RELOAD_FILE', provider.getTextContents);

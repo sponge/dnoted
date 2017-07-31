@@ -7,14 +7,12 @@ import { toggleFolderVisibility } from './actions';
 
 class Sidebar extends Component {
   static propTypes = {
-    tree: PropTypes.object.isRequired,
-    byId: PropTypes.object.isRequired,
+    index: PropTypes.object.isRequired,
     onNodeClick: PropTypes.func.isRequired,
     onFolderClick: PropTypes.func.isRequired
   }
 
   onNodeClick = (ev) => {
-    console.log('node click');
     this.props.onNodeClick(ev.target.getAttribute('data-link'));
     return false;
   }
@@ -29,15 +27,15 @@ class Sidebar extends Component {
   }
 
 // return a list of folders and files recursively
-  renderIndexNode = (subnode) => {
-
+  renderIndexNode = (subnodeId) => {
+    const subnode = this.props.index.byId[subnodeId];
     let subeles = [];
     let files = [];
 
     if (subnode.expanded) {
       subeles = _.map(subnode.children, this.renderIndexNode);
       files = _.map(subnode.files, (id) => {
-        const file = this.props.byId[id];
+        const file = this.props.index.byId[id];
         return <li key={file.id} data-id={file.id}>
           <span onClick={this.onNodeClick} data-link={file.path_lower}>
             <FA fixedWidth={true} name="file-text"/>
@@ -71,16 +69,13 @@ class Sidebar extends Component {
   }
 
   render() {
-    return this.renderIndexNode(this.props.tree)
+    return this.renderIndexNode('root')
   }
 }
 
 const mapStateToProps = state => {
   return {
-    // FIXME: why does this make it work? probably an issue of mutating tree and not making a new one
-    index: state.index, 
-    tree: state.index.tree,
-    byId: state.index.byId
+    index: state.index
   }
 }
 

@@ -5,18 +5,22 @@ import EventEmitter from 'event-emitter-es6';
 // FIXME: pass a wrapped error back to make it slightly more vendor agnostic
 
 class DropboxProvider extends EventEmitter {
-  constructor(access_token) {
+  constructor(access_token, cursor) {
     super()
     this.dbx = new Dropbox({accessToken: access_token});
     this.access_token = access_token;
-    this.cursor = null;
+    this.cursor = cursor;
     this.active = false;
 
-    this.dbx.filesListFolder({path: '', recursive: true})
-      .then(this._fileslistFolderHandler)
-      .catch((error) => {
-        console.error(error);
-      });
+    if (this.cursor) {
+      setTimeout(this._waitForUpdate, 0);
+    } else {
+      this.dbx.filesListFolder({path: '', recursive: true})
+        .then(this._fileslistFolderHandler)
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }
 
   movePath = (oldPath, newPath) => {

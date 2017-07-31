@@ -16,7 +16,7 @@ if (parsedHash['access_token'] !== undefined) {
   document.location.hash = '';
 }
 
-if (localStorage["access_token"] === undefined) {
+if (!localStorage.getItem('access_token')) {
   const dbx = new Dropbox({ clientId: '2mbsah2eqyknfxl' });
   const authUrl = dbx.getAuthenticationUrl(window.location.href);
   window.location.href = authUrl;

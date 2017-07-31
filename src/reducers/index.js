@@ -73,16 +73,17 @@ const viewer = (state = {}, action) => {
 // INDEX BUILDER
 
 // navigates through the tree looking for the folder path and returns that node
-function findNodeForPath(node, path) {   
-  // strip out leading / to not confuse split
+function findNodeForPath(node, path, index) {   
+  // traverse the tree
+  let pathStr = '';
   if (path[0] === '/') {
     path = path.substr(1);
   }
 
-  // traverse the tree
   _(path.split('/')).forEach((subpath) => {
-    if (subpath in node.children) {
-      node = node.children[subpath];
+    pathStr += '/'+subpath;
+    if (pathStr in index.byPath) {
+      node = index.byId[ index.byPath[pathStr] ];
     } else {
       return false;
     }
@@ -100,21 +101,20 @@ function deleteItem(arr, item) {
   return true;
 }
 
+
 const initialState = {
-  tree: {
+  byId: {'root': {
     id: 'root',
     name: 'Main',
     path_lower: '/',
     path_display: '/',
     expanded: true,
-    children: {},
+    children: [],
     files: [],
     parent: null,
     indexId: null
-  },
-
-  byId: {},
-  byPath: {}
+  }},
+  byPath: {'/': 'root'}
 }
 
 const index = (state = initialState, action) => {
@@ -134,7 +134,7 @@ const index = (state = initialState, action) => {
           parent.indexId = null;
         }
 
-        delete parent.children[removed.name];
+        deleteItem(parent.children, removed.id);
         deleteItem(parent.files, id);
         delete ns.byId[id];
         delete ns.byPath[removed.path_lower];
@@ -142,7 +142,7 @@ const index = (state = initialState, action) => {
 
       // add all new folders first because they need to exist before we add files in
       _(action.updates).filter({'.tag': 'folder'}).forEach((folder) => {
-        let node = findNodeForPath(ns.tree, folder.path_lower);
+        let node = findNodeForPath(ns.byId['root'], folder.path_lower, ns);
 
         let newFolder = {
           id: folder.id,
@@ -150,13 +150,13 @@ const index = (state = initialState, action) => {
           path_lower: folder.path_lower,
           path_display: folder.path_display,
           expanded: true,
-          children: {},
+          children: [],
           files: [],
           parent: node.id,
           indexId: null
         };
 
-        node.children[newFolder.name] = newFolder;
+        node.children.push(newFolder.id);
         ns.byId[folder.id] = newFolder;
         ns.byPath[folder.path_lower] = newFolder.id;
       });
@@ -167,7 +167,7 @@ const index = (state = initialState, action) => {
         .forEach((file) => {
           // strip off the filename so we can find the node it belongs in
           const path = file.path_lower.substr(0,file.path_lower.length-file.name.length);
-          let node = findNodeForPath(ns.tree, path);
+          let node = findNodeForPath(ns.byId['root'], path, ns);
 
           file.parent = node.id;
           
@@ -186,7 +186,7 @@ const index = (state = initialState, action) => {
     case 'TOGGLE_FOLDER_VISIBILITY': {
       const ns = {...state};
 
-      let node = action.path === '/' ? ns.tree : ns.byId[ ns.byPath[action.path] ]
+      let node = action.path === '/' ? ns.byId['root'] : ns.byId[ ns.byPath[action.path] ]
       if (!node) {
         return;
       }

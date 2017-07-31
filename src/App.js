@@ -20,15 +20,6 @@ import { ConnectedEditor } from './editor.js';
 import * as Actions from './actions'
 import rootReducer from './reducers'
 
-const store = createStore( rootReducer, {}, applyMiddleware(promiseMiddleware()) );
-window.dbgstore = store; // for debugging
-
-// save index changes to disk
-store.subscribe(() => {
-  const state = store.getState();
-  //localStorage.setItem('index', JSON.stringify(state.index));
-});
-
 class App extends Component {
   constructor() {
     super();
@@ -37,9 +28,25 @@ class App extends Component {
       hideNav: false
     };
 
-    this.provider = new DropboxProvider(localStorage['access_token']);
+    let initial = {};
+    const storedIndex = JSON.parse(localStorage.getItem('index'));
+    if (storedIndex) {
+      initial.index = storedIndex;
+    }
+
+    this.store = createStore( rootReducer, initial, applyMiddleware(promiseMiddleware()) );
+    window.dbgstore = this.store; // for debugging
+
+    // save index changes to disk
+    this.store.subscribe(() => {
+      const state = this.store.getState();
+      localStorage.setItem('index', JSON.stringify(state.index));
+    });
+
+    this.provider = new DropboxProvider(localStorage.getItem('access_token'), storedIndex ? localStorage.getItem('cursor') : null);
     this.provider.on("update", (updates) => {
-      store.dispatch(Actions.updateFileIndex(updates));
+      this.store.dispatch(Actions.updateFileIndex(updates));
+      localStorage.setItem('cursor', this.provider.cursor);
     });
   }
 
@@ -64,7 +71,7 @@ class App extends Component {
       return;
     }
 
-    store.dispatch(Actions.startLoading());
+    this.store.dispatch(Actions.startLoading());
 
     let move = new Promise((a) => a())
     let renamed = false;
@@ -88,7 +95,7 @@ class App extends Component {
     }).catch((error) => {
       // FIXME: error handling
       console.log(error);
-      store.dispatch(Actions.stopLoading());
+      this.store.dispatch(Actions.stopLoading());
     });
   }
 
@@ -98,7 +105,7 @@ class App extends Component {
 
   render = () => {
     return (
-      <ReduxProvider store={store}>
+      <ReduxProvider store={this.store}>
         <Provider>
             <Flex className="App">
               <Box w={(this.state.hideNav ? 0:1)/6} className="sidebar">
