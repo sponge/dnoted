@@ -23,6 +23,12 @@ import rootReducer from './reducers'
 const store = createStore( rootReducer, {}, applyMiddleware(promiseMiddleware()) );
 window.dbgstore = store; // for debugging
 
+// save index changes to disk
+store.subscribe(() => {
+  const state = store.getState();
+  //localStorage.setItem('index', JSON.stringify(state.index));
+});
+
 class App extends Component {
   constructor() {
     super();

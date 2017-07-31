@@ -106,9 +106,10 @@ const initialState = {
     name: 'Main',
     path_lower: '/',
     path_display: '/',
+    expanded: true,
     children: {},
     files: [],
-    parent: undefined,
+    parent: null,
     indexId: null
   },
 
@@ -128,11 +129,13 @@ const index = (state = initialState, action) => {
         const item = ns.byId[id];
 
         // remove this item from all places (subfolder, item, and id/path lookups)
-        if (item.parent.indexId === id) {
-          item.parent.indexId = null;
+        let parent = ns.byId[item.parent];
+        if (parent.indexId === id) {
+          parent.indexId = null;
         }
-        delete item.parent.children[removed.name];
-        deleteItem(item.parent.files, id);
+
+        delete parent.children[removed.name];
+        deleteItem(parent.files, id);
         delete ns.byId[id];
         delete ns.byPath[removed.path_lower];
       });
@@ -146,9 +149,10 @@ const index = (state = initialState, action) => {
           name: folder.name,
           path_lower: folder.path_lower,
           path_display: folder.path_display,
+          expanded: true,
           children: {},
           files: [],
-          parent: node,
+          parent: node.id,
           indexId: null
         };
 
@@ -165,7 +169,7 @@ const index = (state = initialState, action) => {
           const path = file.path_lower.substr(0,file.path_lower.length-file.name.length);
           let node = findNodeForPath(ns.tree, path);
 
-          file.parent = node;
+          file.parent = node.id;
           
           if (file.name === "index.md") {
             node.indexId = file.id;
@@ -178,6 +182,18 @@ const index = (state = initialState, action) => {
         });
 
         return ns;
+
+    case 'TOGGLE_FOLDER_VISIBILITY': {
+      const ns = {...state};
+
+      let node = action.path === '/' ? ns.tree : ns.byId[ ns.byPath[action.path] ]
+      if (!node) {
+        return;
+      }
+      node.expanded = !node.expanded;
+
+      return ns;
+    }
 
     default:
       return state;

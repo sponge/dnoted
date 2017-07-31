@@ -20,3 +20,7 @@ export function startLoading() {
 export function stopLoading() {
     return { type: 'LOADING_END' };
 }
+
+export function toggleFolderVisibility(path) {
+    return { type: 'TOGGLE_FOLDER_VISIBILITY', path};
+}

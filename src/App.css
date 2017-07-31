@@ -9,7 +9,16 @@
 
 .sidebar {
     background-color: #2A2B2E;
+    user-select: none;
     /* background-color: rgba(0,90,0,255); */
+}
+
+.sidebar .fa {
+    margin-right: 5px;
+}
+
+.sidebar .fa.folder:hover {
+    color: #3F8BE9;
 }
 
 .sidebar ul .fa {
@@ -28,7 +37,7 @@
 }
 
 .sidebar ul span.disabled {
-    color: #666;
+    color: #999;
 }
 
 .sidebar ul span.disabled:hover {
