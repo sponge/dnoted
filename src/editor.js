@@ -154,7 +154,7 @@ class Editor extends Component {
       <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
     </span>
 
-    return <ToolbarView toolbar={toolbar}>
+    return <ToolbarView toolbar={toolbar} hasFlex={true}>
       <Box w={6/10} ref="editBox" style={{overflowY: 'scroll'}}>
         {!this.props.isLoading ? <CodeMirror ref="cm_instance" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/> : null }
       </Box>
