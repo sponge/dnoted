@@ -90,17 +90,21 @@ class Editor extends Component {
   };
 
   _indentListOrTab(cm, unindent) {
-    const line = cm.getCursor().line;
-    const text = cm.getLine(line);
+    const startLine = cm.getCursor('start').line;
+    const endLine = cm.getCursor('end').line;
     const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-    if (text.trim().startsWith('- ')) {
-      if (!unindent) {
-        cm.replaceRange(spaces, {line:line, ch:0});
-      } else {
-        cm.replaceRange("", {line:line, ch:0}, {line:line, ch:spaces.length});
-      }
-    } else {
+
+    if (startLine == endLine) {
       cm.replaceSelection(spaces);
+      return;
+    }
+
+    for (let i = startLine; i <= endLine; i++) {
+      if (!unindent) {
+        cm.replaceRange(spaces, {line:i, ch:0});
+      } else {
+        cm.replaceRange("", {line:i, ch:0}, {line:i, ch:spaces.length});
+      }
     }
   }
 
