@@ -37,18 +37,12 @@
 }
 
 .sidebar ul span.disabled {
+    cursor: default;
     color: #999;
 }
 
-.sidebar ul span.disabled:hover {
-    background-color: transparent;
-}
-
-.sidebar ul span.disabled:hover span {
-    background-color: transparent;
-}
-
-.sidebar ul span:hover {
+.sidebar ul span.file-clickable:hover,
+.sidebar ul span.folder-clickable:hover {
     cursor: default;
     background-color: #666;
 }

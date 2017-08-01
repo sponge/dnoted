@@ -37,7 +37,7 @@ class Sidebar extends Component {
       files = _.map(subnode.files, (id) => {
         const file = this.props.index.byId[id];
         return <li key={file.id} data-id={file.id}>
-          <span onClick={this.onNodeClick} data-link={file.path_lower}>
+          <span className="file-clickable" onClick={this.onNodeClick} data-link={file.path_lower}>
             <FA fixedWidth={true} name="file-text"/>
             {file.name.replace('.md','')}
           </span>
@@ -48,11 +48,11 @@ class Sidebar extends Component {
     return <ul key={subnode.id}>
       <li>
         {subnode.indexId ?
-          <span onClick={this.onNodeClick} data-link={subnode.path_lower}>
+          <span>
             <span data-folder={subnode.path_lower} onClick={this.onFolderClick}>
               <FA className="folder" fixedWidth={true} name={subnode.expanded ? "folder-open" : "folder"}/>
             </span>
-            {subnode.name}
+            <span onClick={this.onNodeClick} data-link={subnode.path_lower} className="folder-clickable">{subnode.name}</span>
           </span>
         : 
           <span className="disabled">

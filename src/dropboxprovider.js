@@ -59,7 +59,7 @@ class DropboxProvider extends EventEmitter {
         const reader = new FileReader();
         reader.addEventListener("loadend", (reader) => {
           resolve({
-            name: response.name,
+            name: response.path_display,
             text: reader.target.result,
             path: response.path_lower,
             rev: response.rev
