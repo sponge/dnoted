@@ -21,6 +21,10 @@ class Viewer extends Component {
     onClickMenu: PropTypes.func.isRequired
   }
 
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+
   componentWillMount() {
     this.props.viewFile(this.props.path);
   }
@@ -36,16 +40,15 @@ class Viewer extends Component {
   }
 
   render() {
-    console.log('props', this.props);
     const toolbar = <span>
-      <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
+      <NavLink className="toaster" onClick={this.props.onClickMenu}><FA name="bars"/></NavLink>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
       {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
       {!this.props.isLoading && !this.props.error ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
     </span>
 
     return <ToolbarView toolbar={toolbar}>
-      {this.props.text ? <div className="read page" dangerouslySetInnerHTML={{__html: Marked(this.props.text)}} /> : null}
+      {this.props.text ? <div onClick={this.hijackLink} className="read page" dangerouslySetInnerHTML={{__html: Marked(this.props.text)}} /> : null}
     </ToolbarView>
   }
 }

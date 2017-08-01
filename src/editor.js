@@ -150,9 +150,9 @@ class Editor extends Component {
     const newerRevision = this.props.latestRev !== this.props.rev;
 
     const toolbar = <span>
-      <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
+      <NavLink className="toaster" onClick={this.props.onClickMenu}><FA name="bars"/></NavLink>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
-      <Input onChange={this.onNameChange} value={this.state.name} placeholder='Title'/>
+      <Input readOnly={this.props.isLoading} onChange={this.onNameChange} value={this.state.name} placeholder='Path'/>
       <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>
       {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}
       <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
@@ -175,7 +175,8 @@ const mapStateToProps = state => {
     text: state.viewer.text,
     rev: state.viewer.rev,
     latestRev: state.viewer.latestRev,
-    isLoading: state.viewer.isLoading
+    isLoading: state.viewer.isLoading,
+    error: state.viewer.error
   }
 }
 

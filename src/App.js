@@ -109,7 +109,7 @@ class App extends Component {
         <Provider>
             <Flex className="App">
               <Box w={(this.state.hideNav ? 0:1)/6} className="sidebar">
-                <ToolbarView toolbar={<NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>}>
+                <ToolbarView toolbar={<div><NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink></div>}>
                   <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
                 </ToolbarView>
               </Box>

@@ -28,6 +28,7 @@ const viewer = (state = {}, action) => {
       };
       return {...state, ...newState, ...action.payload};
 
+    case 'RELOAD_FILE_REJECTED':
     case 'VIEW_FILE_REJECTED':
       newState = {
         isLoading: false,

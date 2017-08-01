@@ -3,18 +3,22 @@
     height: 100vh;
 }
 
-.view-toolbar .fa {
-    margin-right: 1em;
-}
-
 .sidebar {
     background-color: #2A2B2E;
     user-select: none;
     /* background-color: rgba(0,90,0,255); */
 }
 
-.sidebar .fa {
-    margin-right: 5px;
+.toaster .fa {
+    padding: 0 0.5em;
+}
+
+.view-toolbar .fa-spin {
+    margin-right: 0.5em;
+}
+
+.sidebar .fa-plus-circle {
+    padding: 0 0.5em;
 }
 
 .sidebar .fa.folder:hover {
@@ -24,6 +28,7 @@
 .sidebar ul .fa {
     font-size: 80%;
     vertical-align: 1px;
+    margin-right: 5px;
 }
 
 .sidebar ul {
