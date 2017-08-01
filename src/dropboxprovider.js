@@ -54,20 +54,31 @@ class DropboxProvider extends EventEmitter {
 
   getTextContents = (path) => {
     const filePromise = new Promise((resolve, reject) => {
-      this.dbx.filesDownload({path: path}).then((response) => {
-        const blob = response.fileBlob;
-        const reader = new FileReader();
-        reader.addEventListener("loadend", (reader) => {
-          resolve({
-            name: response.path_display,
-            text: reader.target.result,
-            path: response.path_lower,
-            rev: response.rev
-          });
+      let responseMeta;
+      fetch('https://content.dropboxapi.com/2/files/download', {
+        method: 'POST',
+        headers: new Headers({
+          'Authorization': `Bearer ${this.access_token}`,
+          'Dropbox-API-Arg': `{"path":"${path}"}`
+        })
+      }).then((response) => {
+        if (!response.ok) {
+          reject(path === '/index.md' ? 'SHOW_INDEX' : response.statusText);
+          return;
+        }
+
+        responseMeta = JSON.parse( response.headers.get('dropbox-api-result') );
+        return response.text();
+      }).then((text) => {
+        resolve({
+          name: responseMeta.path_display,
+          text: text,
+          path: responseMeta.path_lower,
+          rev: responseMeta.rev
         });
-        reader.readAsText(blob);
-      })
-      .catch(reject);
+      }).catch((error) => {
+        reject('Error in fetch');
+      });
     });
 
     return filePromise;

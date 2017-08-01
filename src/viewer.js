@@ -36,11 +36,12 @@ class Viewer extends Component {
   }
 
   render() {
+    console.log('props', this.props);
     const toolbar = <span>
       <FA fixedWidth={true} name="bars" onClick={this.props.onClickMenu}/>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
       {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
-      {!this.props.isLoading ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
+      {!this.props.isLoading && !this.props.error ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
     </span>
 
     return <ToolbarView toolbar={toolbar}>
@@ -51,6 +52,7 @@ class Viewer extends Component {
 
 const mapStateToProps = state => {
   return {
+    error: state.viewer.error,
     isLoading: state.viewer.isLoading,
     name: state.viewer.name,
     text: state.viewer.text,

@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash';
+import WelcomeMessage from '../welcomemessage.js';
 
 const viewer = (state = {}, action) => {
   let newState;
@@ -29,10 +30,11 @@ const viewer = (state = {}, action) => {
 
     case 'VIEW_FILE_REJECTED':
       newState = {
-          isLoading: false,
-          isLoaded: false,
-          error: true
-        }
+        isLoading: false,
+        isLoaded: false,
+        error: true,
+        text: action.payload === 'SHOW_INDEX' ? WelcomeMessage : `Error while showing page: ${action.payload}`
+      }
       return newState;
 
     case 'CLEAR_FILE':
