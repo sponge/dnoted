@@ -68,3 +68,7 @@
     box-sizing: border-box;
     height: 100% !important;
 }
+
+.content .page .CodeMirror-selected {
+    background:#335 !important;
+}
