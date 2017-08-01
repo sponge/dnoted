@@ -94,7 +94,7 @@ class Editor extends Component {
     const endLine = cm.getCursor('end').line;
     const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
 
-    if (startLine == endLine) {
+    if (startLine === endLine) {
       cm.replaceSelection(spaces);
       return;
     }

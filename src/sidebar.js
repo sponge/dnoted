@@ -28,15 +28,15 @@ class Sidebar extends Component {
 
 // return a list of folders and files recursively
   renderIndexNode = (subnodeId) => {
-    const subnode = this.props.index.byId[subnodeId];
+    const subnode = this.props.index.byPath[subnodeId];
     let subeles = [];
     let files = [];
 
     if (subnode.expanded) {
       subeles = _.map(subnode.children, this.renderIndexNode);
       files = _.map(subnode.files, (id) => {
-        const file = this.props.index.byId[id];
-        return <li key={file.id} data-id={file.id}>
+        const file = this.props.index.byPath[id];
+        return <li key={file.path_lower} data-id={file.path_lower}>
           <span className="file-clickable" onClick={this.onNodeClick} data-link={file.path_lower}>
             <FA fixedWidth={true} name="file-text"/>
             {file.name.replace('.md','')}
@@ -69,7 +69,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    return this.renderIndexNode('root')
+    return this.renderIndexNode('/')
   }
 }
 

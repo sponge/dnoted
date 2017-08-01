@@ -83,7 +83,7 @@ function findNodeForPath(node, path, index) {
   _(path.split('/')).forEach((subpath) => {
     pathStr += '/'+subpath;
     if (pathStr in index.byPath) {
-      node = index.byId[ index.byPath[pathStr] ];
+      node = index.byPath[pathStr];
     } else {
       return false;
     }
@@ -103,18 +103,19 @@ function deleteItem(arr, item) {
 
 
 const initialState = {
-  byId: {'root': {
-    id: 'root',
-    name: 'Main',
-    path_lower: '/',
-    path_display: '/',
-    expanded: true,
-    children: [],
-    files: [],
-    parent: null,
-    indexId: null
-  }},
-  byPath: {'/': 'root'}
+  byPath: {'/': 
+    {
+      id: 'root',
+      name: 'Main',
+      path_lower: '/',
+      path_display: '/',
+      expanded: true,
+      children: [],
+      files: [],
+      parent: null,
+      indexId: null
+    }
+  }
 }
 
 const index = (state = initialState, action) => {
@@ -124,25 +125,22 @@ const index = (state = initialState, action) => {
 
       // handle file deletes
       _(action.updates).filter({'.tag': 'deleted'}).forEach((removed) => {
-        // dropbox doesn't give us an id, so lets get our object based on the dropbox passed delete
-        const id = ns.byPath[removed.path_lower];
-        const item = ns.byId[id];
+        const item = ns.byPath[removed.path_lower];
 
         // remove this item from all places (subfolder, item, and id/path lookups)
-        let parent = ns.byId[item.parent];
-        if (parent.indexId === id) {
+        let parent = ns.byPath[item.parent];
+        if (parent.indexId === item.path_lower) {
           parent.indexId = null;
         }
 
-        deleteItem(parent.children, removed.id);
-        deleteItem(parent.files, id);
-        delete ns.byId[id];
+        deleteItem(parent.children, item.path_lower);
+        deleteItem(parent.files, item.path_lower);
         delete ns.byPath[removed.path_lower];
       });
 
       // add all new folders first because they need to exist before we add files in
       _(action.updates).filter({'.tag': 'folder'}).forEach((folder) => {
-        let node = findNodeForPath(ns.byId['root'], folder.path_lower, ns);
+        let node = findNodeForPath(ns.byPath['/'], folder.path_lower, ns);
 
         let newFolder = {
           id: folder.id,
@@ -152,13 +150,12 @@ const index = (state = initialState, action) => {
           expanded: true,
           children: [],
           files: [],
-          parent: node.id,
+          parent: node.path_lower,
           indexId: null
         };
 
-        node.children.push(newFolder.id);
-        ns.byId[folder.id] = newFolder;
-        ns.byPath[folder.path_lower] = newFolder.id;
+        node.children.push(newFolder.path_lower);
+        ns.byPath[folder.path_lower] = newFolder;
       });
 
       // now add all new files
@@ -167,18 +164,17 @@ const index = (state = initialState, action) => {
         .forEach((file) => {
           // strip off the filename so we can find the node it belongs in
           const path = file.path_lower.substr(0,file.path_lower.length-file.name.length);
-          let node = findNodeForPath(ns.byId['root'], path, ns);
+          let node = findNodeForPath(ns.byPath['/'], path, ns);
 
-          file.parent = node.id;
+          file.parent = node.path_lower;
           
           if (file.name === "index.md") {
-            node.indexId = file.id;
+            node.indexId = file.path_lower;
           } else {
-            node.files.push(file.id);
+            node.files.push(file.path_lower);
           }
 
-          ns.byId[file.id] = file;
-          ns.byPath[file.path_lower] = file.id;
+          ns.byPath[file.path_lower] = file;
         });
 
         return ns;
@@ -186,7 +182,7 @@ const index = (state = initialState, action) => {
     case 'TOGGLE_FOLDER_VISIBILITY': {
       const ns = {...state};
 
-      let node = action.path === '/' ? ns.byId['root'] : ns.byId[ ns.byPath[action.path] ]
+      let node = action.path === '/' ? ns.byPath['/'] : ns.byPath[action.path];
       if (!node) {
         return;
       }
