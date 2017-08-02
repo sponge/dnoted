@@ -8,6 +8,24 @@ import FA from 'react-fontawesome';
 import ToolbarView from './toolbarview.js';
 
 class Viewer extends Component {
+  constructor() {
+    super();
+    
+    let renderer = new Marked.Renderer();
+    renderer.link = (href, title, text) => {
+      try {
+        const url = new URL(encodeURI(href), document.location.origin + this.context.router.route.location.pathname);
+        const newHref = url.origin !== document.location.origin ? encodeURI(href) : this.context.router.history.createHref({pathname:url.pathname});
+        return `<a href="${newHref}" title="${title}">${text}</a>`;
+      } catch (e) {
+        console.info("Caught exception in markdown link renderer:", e);
+        return `<a href="${href}" title="${title}">${text}</a>`;
+        return "";
+      }
+    }
+    Marked.setOptions({renderer});
+  }
+
   static propTypes = {
     name: PropTypes.string,
     path: PropTypes.string,

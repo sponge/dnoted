@@ -52,7 +52,7 @@ class Sidebar extends Component {
             <span data-folder={subnode.path_lower} onClick={this.onFolderClick}>
               <FA className="folder" fixedWidth={true} name={subnode.expanded ? "folder-open" : "folder"}/>
             </span>
-            <span onClick={this.onNodeClick} data-link={subnode.path_lower} className="folder-clickable">{subnode.name}</span>
+            <span onClick={this.onNodeClick} data-link={subnode.indexId} className="folder-clickable">{subnode.name}</span>
           </span>
         : 
           <span className="disabled">

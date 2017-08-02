@@ -116,7 +116,7 @@ const initialState = {
       children: [],
       files: [],
       parent: null,
-      indexId: null
+      indexId: '/index.md'
     }
   }
 }
