@@ -77,3 +77,16 @@
 .content .page .CodeMirror-selected {
     background:#335 !important;
 }
+
+.task-list-item {
+    list-style-type: none;
+}
+
+.page li p {
+    margin: 0;
+    padding: 0;
+}
+
+.page li ul {
+    padding: 0 0 0 1.5em;
+}

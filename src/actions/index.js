@@ -28,3 +28,7 @@ export function stopLoading() {
 export function toggleFolderVisibility(path) {
     return { type: 'TOGGLE_FOLDER_VISIBILITY', path};
 }
+
+export function toggleTaskListItem(item) {
+    return { type: 'TOGGLE_TASK_LIST_ITEM', item};
+}

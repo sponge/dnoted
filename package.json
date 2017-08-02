@@ -22,7 +22,8 @@
     "redux-actions": "^2.2.1",
     "redux-promise-middleware": "^4.3.0",
     "remark": "^8.0.0",
-    "remark-react": "^4.0.0"
+    "remark-react": "^4.0.0",
+    "remark-task-list": "0.0.2"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Remark from 'remark';
 import ReactRenderer from 'remark-react';
+import RemarkTaskList from 'remark-task-list';
 
 class WikiLink extends Component {
   static contextTypes = {
@@ -24,14 +25,25 @@ class WikiLink extends Component {
 }
 
 class Markdown extends Component {
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    onChecked: PropTypes.func
+  }
+
   render() {
+    let onChecked = this.props.onChecked;
+
     const options = {
       sanitize: false,
       remarkReactComponents: {
-        a: WikiLink
+        a: WikiLink,
+        input: ({checked}) => {
+          return <input onChange={(ev) => onChecked(ev.target.parentElement.id)} type="checkbox" checked={checked !== undefined}/>;
+        }
       }
     }
-    return Remark().use(ReactRenderer, options).processSync(this.props.text).contents;
+
+    return Remark().use(ReactRenderer, options).use(RemarkTaskList).processSync(this.props.text).contents;
   }
 }
 

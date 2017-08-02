@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash';
+import Remark from 'remark';
+import RemarkTaskList from 'remark-task-list';
 import WelcomeMessage from '../welcomemessage.js';
 
 const viewer = (state = {}, action) => {
@@ -67,6 +69,12 @@ const viewer = (state = {}, action) => {
       }
 
       return {...state, ...ns};
+    
+    case 'TOGGLE_TASK_LIST_ITEM': {
+      const ns = {};
+      ns.text = Remark().use(RemarkTaskList, {toggle: [action.item]}).processSync(state.text).contents;
+      return {...state, ...ns};
+    }
 
     default:
       return state;

@@ -63,6 +63,18 @@ class App extends Component {
     return path;
   }
 
+  saveTaskList = () => {
+    this.store.dispatch(Actions.startLoading());
+    const st = this.store.getState();
+    this.provider.setTextContents(st.viewer.path, st.viewer.text).then(() => {
+      this.store.dispatch(Actions.stopLoading());
+    }).catch((error) => {
+      // FIXME: error handling
+      console.log(error);
+      this.store.dispatch(Actions.stopLoading());
+    });
+  }
+
   saveFile = (file) => {
     const history = this.context.router.history;
 
@@ -92,6 +104,7 @@ class App extends Component {
       }
 
       history.push(savePath);
+      this.store.dispatch(Actions.stopLoading());
     }).catch((error) => {
       // FIXME: error handling
       console.log(error);
@@ -126,7 +139,7 @@ class App extends Component {
 
                   <Route path="/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onClickEdit={() => props.history.push("/edit"+path)}/>
+                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onTaskListChecked={this.saveTaskList} onClickEdit={() => props.history.push("/edit"+path)}/>
                   }}/>
                 </Switch>
               </Box>
