@@ -5,6 +5,7 @@ import './App.css';
 import 'font-awesome/css/font-awesome.css'
 import FA from 'react-fontawesome';
 import { Provider, Flex, Box, NavLink } from 'rebass'
+import _ from 'lodash';
 
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -36,6 +37,8 @@ class App extends Component {
 
     this.store = createStore( rootReducer, initial, applyMiddleware(promiseMiddleware()) );
     window.dbgstore = this.store; // for debugging
+
+    this.debouncedSaveTaskList = _.debounce(this.saveTaskList, 5000);
 
     // save index changes to disk
     this.store.subscribe(() => {
@@ -139,7 +142,7 @@ class App extends Component {
 
                   <Route path="/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onTaskListChecked={this.saveTaskList} onClickEdit={() => props.history.push("/edit"+path)}/>
+                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onTaskListChecked={this.debouncedSaveTaskList} onClickEdit={() => props.history.push("/edit"+path)}/>
                   }}/>
                 </Switch>
               </Box>
