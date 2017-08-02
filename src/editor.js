@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
+import { Prompt } from 'react-router-dom'
 import { Box } from 'rebass';
 import { Input, NavLink } from 'rebass'
 import { connect } from 'react-redux';
@@ -8,6 +9,8 @@ import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
 import ToolbarView from './toolbarview.js';
 import Markdown from './markdownviewer.js';
+import Remark from 'remark';
+import RemarkTaskList from 'remark-task-list';
 
 import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/markdown/markdown';
@@ -25,6 +28,7 @@ class Editor extends Component {
     newFile: PropTypes.func.isRequired,
     viewFile: PropTypes.func.isRequired,
     onClickCancel: PropTypes.func.isRequired,
+    onClickDelete: PropTypes.func,
     onClickReload: PropTypes.func.isRequired,
     onClickSave: PropTypes.func.isRequired,
     onClickMenu: PropTypes.func.isRequired
@@ -37,13 +41,14 @@ class Editor extends Component {
       path: null,
       rev: null,
       name: '',
-      text: ''
+      text: '',
+      disableQuitPrompt: false
     }
   }
   
   componentDidMount() {
-    this.editDOM = ReactDOM.findDOMNode(this.refs.editBox)
-    this.previewDOM = ReactDOM.findDOMNode(this.refs.previewBox)
+    this.editDOM = findDOMNode(this.refs.editBox)
+    this.previewDOM = findDOMNode(this.refs.previewBox)
     this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
   }
 
@@ -88,6 +93,26 @@ class Editor extends Component {
       text: text
     });
   };
+
+  onSave = (ev) => {
+    this.setState({
+      disableQuitPrompt: true
+    }, () => {
+      this.props.onClickSave(this.state);
+    })
+    
+  }
+
+  onChecked = (name) => {
+    const newText = Remark().use(RemarkTaskList, {toggle: [name]}).processSync(this.state.text).contents;
+    console.log('test', name, newText);
+
+    this.setState({
+      text: newText
+    }, () => {
+      this.refs.cm_instance.getCodeMirror().setValue(newText);
+    })
+  }
 
   _indentListOrTab(cm, unindent) {
     const startLine = cm.getCursor('start').line;
@@ -144,7 +169,7 @@ class Editor extends Component {
         'Ctrl-I': (cm) => this._wrapSelection(cm, "*"),
         'Ctrl-U': (cm) => this._wrapSelection(cm, "`"),
         'Ctrl-K': (cm) => this._wrapSelection(cm, "~~"),
-        'Ctrl-S': (cm) => this.props.onClickSave(this.state)
+        'Ctrl-S': (cm) => this.onSave()
       }
 		};
     const newerRevision = this.props.latestRev !== this.props.rev;
@@ -153,17 +178,19 @@ class Editor extends Component {
       <NavLink className="toaster" onClick={this.props.onClickMenu}><FA name="bars"/></NavLink>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
       <Input readOnly={this.props.isLoading} onChange={this.onNameChange} value={this.state.name} placeholder='Path'/>
+      {this.props.onClickDelete ? <NavLink onClick={() => this.props.onClickDelete(this.props.path)} ml='auto'>Delete</NavLink> : null}
       <NavLink onClick={this.props.onClickCancel} ml='auto'>Cancel</NavLink>
       {newerRevision ? <NavLink onClick={() => this.props.onClickReload(this.props.path)}>Reload Latest</NavLink> : null}
-      <NavLink onClick={() => this.props.onClickSave(this.state)}>Save</NavLink>
+      <NavLink onClick={this.onSave}>Save</NavLink>
     </span>
 
     return <ToolbarView toolbar={toolbar} hasFlex={true}>
+      <Prompt when={this.state.disableQuitPrompt == false && this.state.text != this.props.text} message={"Discard changes?"}/>
       <Box w={6/10} ref="editBox" style={{overflowY: 'scroll'}}>
         {!this.props.isLoading ? <CodeMirror ref="cm_instance" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/> : null }
       </Box>
       <Box w={4/10} ref="previewBox" style={{overflowY: 'hidden'}}>
-        {!this.props.isLoading ? <div className="page preview"><Markdown text={this.state.text}/></div> : null }
+        {!this.props.isLoading ? <div className="page preview"><Markdown onChecked={this.onChecked} text={this.state.text}/></div> : null }
       </Box>
     </ToolbarView>
   }

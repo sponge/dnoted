@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import _ from 'lodash';
+import { filter, forEach } from 'lodash';
 import Remark from 'remark';
 import RemarkTaskList from 'remark-task-list';
 import WelcomeMessage from '../welcomemessage.js';
@@ -91,7 +91,7 @@ function findNodeForPath(node, path, index) {
     path = path.substr(1);
   }
 
-  _(path.split('/')).forEach((subpath) => {
+  forEach(path.split('/'), (subpath) => {
     pathStr += '/'+subpath;
     if (pathStr in index.byPath) {
       node = index.byPath[pathStr];
@@ -135,7 +135,7 @@ const index = (state = initialState, action) => {
       const ns = {...state};
 
       // handle file deletes
-      _(action.updates).filter({'.tag': 'deleted'}).forEach((removed) => {
+      filter(action.updates, {'.tag': 'deleted'}).forEach((removed) => {
         const item = ns.byPath[removed.path_lower];
 
         // remove this item from all places (subfolder, item, and id/path lookups)
@@ -150,7 +150,7 @@ const index = (state = initialState, action) => {
       });
 
       // add all new folders first because they need to exist before we add files in
-      _(action.updates).filter({'.tag': 'folder'}).forEach((folder) => {
+      filter(action.updates, {'.tag': 'folder'}).forEach((folder) => {
         let node = findNodeForPath(ns.byPath['/'], folder.path_lower, ns);
 
         let newFolder = {
@@ -170,7 +170,7 @@ const index = (state = initialState, action) => {
       });
 
       // now add all new files
-      _(action.updates).filter({'.tag': 'file'})
+      filter(action.updates, {'.tag': 'file'})
         .filter((f) => { return f.name.endsWith('.md') })
         .forEach((file) => {
           // strip off the filename so we can find the node it belongs in

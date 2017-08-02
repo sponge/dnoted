@@ -36,10 +36,20 @@ class Markdown extends Component {
     const options = {
       sanitize: false,
       remarkReactComponents: {
-        a: WikiLink,
-        input: ({checked}) => {
-          return <input onChange={(ev) => onChecked(ev.target.parentElement.id)} type="checkbox" checked={checked !== undefined}/>;
-        }
+        li: (props) => {
+          // this is awful but it transforms list items that are task lists into checkbox + label
+          if (props.className && props.className.indexOf('task-list-item') >= 0) {
+            const checkbox = props.children.shift();
+            const labelChildren = props.children.splice(0);
+
+            props.children.push(<input type="checkbox" id={'check-'+props.id} key={'check-'+props.id} checked={checkbox.props.checked !== undefined} onChange={(ev) => onChecked(ev.target.parentElement.id)} />);
+            props.children.push(<label key={'label-'+props.id} htmlFor={'check-'+props.id}>{labelChildren}</label>);
+          }
+
+          return <li {...props}>{props.children}</li>;
+        },
+
+        a: WikiLink
       }
     }
 

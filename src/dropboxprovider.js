@@ -40,6 +40,22 @@ class DropboxProvider extends EventEmitter {
     return movePromise;
   }
 
+  deleteFile = (path) => {
+    // FIXME: should probably pass something relevant back
+    const deletePromise = new Promise((resolve, reject) => {
+      this.dbx.filesDelete({
+        path: path
+      }).then((response) => {
+        resolve();
+      }).catch((error) => {
+        console.error(error);
+        reject();
+      });
+    });
+
+    return deletePromise;    
+  }
+
   getFileRevisions = (path) => {
     // FIXME: don't use dropbox responses directly, make our own object
     const revPromise = new Promise((resolve, reject) => {

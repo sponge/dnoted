@@ -5,7 +5,7 @@ import './App.css';
 import 'font-awesome/css/font-awesome.css'
 import FA from 'react-fontawesome';
 import { Provider, Flex, Box, NavLink } from 'rebass'
-import _ from 'lodash';
+import { debounce } from 'lodash';
 
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -38,8 +38,6 @@ class App extends Component {
     this.store = createStore( rootReducer, initial, applyMiddleware(promiseMiddleware()) );
     window.dbgstore = this.store; // for debugging
 
-    this.debouncedSaveTaskList = _.debounce(this.saveTaskList, 5000);
-
     // save index changes to disk
     this.store.subscribe(() => {
       const state = this.store.getState();
@@ -67,16 +65,20 @@ class App extends Component {
   }
 
   saveTaskList = () => {
-    this.store.dispatch(Actions.startLoading());
     const st = this.store.getState();
-    this.provider.setTextContents(st.viewer.path, st.viewer.text).then(() => {
+    this.debouncedSaveTaskList(st.viewer.path, st.viewer.text);
+  }
+
+  debouncedSaveTaskList = debounce((path, text) => {
+    this.store.dispatch(Actions.startLoading());
+    this.provider.setTextContents(path, text).then(() => {
       this.store.dispatch(Actions.stopLoading());
     }).catch((error) => {
       // FIXME: error handling
       console.log(error);
       this.store.dispatch(Actions.stopLoading());
-    });
-  }
+    });    
+  }, 5000)
 
   saveFile = (file) => {
     const history = this.context.router.history;
@@ -93,8 +95,10 @@ class App extends Component {
 
     let savePath = file.name.endsWith('.md') ? file.name : file.name+'.md';
     savePath = savePath.startsWith('/') ? savePath : '/'+savePath;
-    
-    if (file.path !== savePath) {
+
+    if (!file.path) {
+      renamed = true;
+    } else if (file.path !== savePath) {
       move = this.provider.movePath(file.path, savePath);
       renamed = true;
     }
@@ -119,6 +123,19 @@ class App extends Component {
     this.setState({hideNav: !this.state.hideNav});
   }
 
+  onClickDelete = (path) => {
+    const history = this.context.router.history;
+    const res = window.confirm(`Are you sure you want to delete ${path}?`);
+
+    if (!res) {
+      return;
+    }
+    
+    this.provider.deleteFile(path).then((response) => {
+      history.push('/');
+    })
+  }
+
   render = () => {
     return (
       <ReduxProvider store={this.store}>
@@ -137,12 +154,12 @@ class App extends Component {
 
                   <Route path="/edit/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedEditor onClickMenu={this.onClickMenu} path={path} onClickCancel={() => props.history.push(path)} onClickSave={this.saveFile}/>
+                    return <ConnectedEditor onClickMenu={this.onClickMenu} onClickDelete={this.onClickDelete} path={path} onClickCancel={() => props.history.push(path)} onClickSave={this.saveFile}/>
                   }}/>
 
                   <Route path="/*" render={(props) => {
                     const path = this.getFilePath(props);
-                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onTaskListChecked={this.debouncedSaveTaskList} onClickEdit={() => props.history.push("/edit"+path)}/>
+                    return <ConnectedViewer onClickMenu={this.onClickMenu} path={path} onTaskListChecked={this.saveTaskList} onClickEdit={() => props.history.push("/edit"+path)}/>
                   }}/>
                 </Switch>
               </Box>

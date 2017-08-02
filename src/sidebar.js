@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { map } from 'lodash';
 import FA from 'react-fontawesome';
 import { toggleFolderVisibility } from './actions';
 
@@ -33,8 +33,8 @@ class Sidebar extends Component {
     let files = [];
 
     if (subnode.expanded) {
-      subeles = _.map(subnode.children, this.renderIndexNode);
-      files = _.map(subnode.files, (id) => {
+      subeles = map(subnode.children, this.renderIndexNode);
+      files = map(subnode.files, (id) => {
         const file = this.props.index.byPath[id];
         return <li key={file.path_lower} data-id={file.path_lower}>
           <span className="file-clickable" onClick={this.onNodeClick} data-link={file.path_lower}>
