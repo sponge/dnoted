@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { Box } from 'rebass';
-import Marked from 'marked';
 import { Input, NavLink } from 'rebass'
 import { connect } from 'react-redux';
 import { viewFile, reloadFile, clearFile } from './actions'
 import FA from 'react-fontawesome';
 import ToolbarView from './toolbarview.js';
+import Markdown from './markdownviewer.js';
 
 import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/markdown/markdown';
@@ -163,7 +163,7 @@ class Editor extends Component {
         {!this.props.isLoading ? <CodeMirror ref="cm_instance" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/> : null }
       </Box>
       <Box w={4/10} ref="previewBox" style={{overflowY: 'hidden'}}>
-        {!this.props.isLoading ? <div className="page preview" dangerouslySetInnerHTML={{__html: Marked(this.state.text)}}></div> : null }
+        {!this.props.isLoading ? <div className="page preview"><Markdown text={this.state.text}/></div> : null }
       </Box>
     </ToolbarView>
   }

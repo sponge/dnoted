@@ -1,31 +1,14 @@
 import React, { Component } from 'react';
 import { Text, NavLink } from 'rebass'
-import Marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { viewFile, reloadFile } from './actions'
 import FA from 'react-fontawesome';
 import ToolbarView from './toolbarview.js';
+import Markdown from './markdownviewer.js';
+
 
 class Viewer extends Component {
-  constructor() {
-    super();
-    
-    let renderer = new Marked.Renderer();
-    renderer.link = (href, title, text) => {
-      try {
-        const url = new URL(encodeURI(href), document.location.origin + this.context.router.route.location.pathname);
-        const newHref = url.origin !== document.location.origin ? encodeURI(href) : this.context.router.history.createHref({pathname:url.pathname});
-        return `<a href="${newHref}" title="${title}">${text}</a>`;
-      } catch (e) {
-        console.info("Caught exception in markdown link renderer:", e);
-        return `<a href="${href}" title="${title}">${text}</a>`;
-        return "";
-      }
-    }
-    Marked.setOptions({renderer});
-  }
-
   static propTypes = {
     name: PropTypes.string,
     path: PropTypes.string,
@@ -66,7 +49,7 @@ class Viewer extends Component {
     </span>
 
     return <ToolbarView toolbar={toolbar}>
-      {this.props.text ? <div onClick={this.hijackLink} className="read page" dangerouslySetInnerHTML={{__html: Marked(this.props.text)}} /> : null}
+      {this.props.text ? <div className="read page"><Markdown className="read page" text={this.props.text}/></div> : null}
     </ToolbarView>
   }
 }
