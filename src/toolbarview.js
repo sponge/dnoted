@@ -5,8 +5,8 @@ import { Toolbar } from 'rebass'
 
 class ToolbarView extends Component {
   static propTypes = {
-    toolbar: PropTypes.element,
-    hasFlex: PropTypes.bool
+    toolbar: PropTypes.element, // items that go in the toolbar
+    hasFlex: PropTypes.bool // editor needs flex, everything else doesn't
   }
     
   render() {

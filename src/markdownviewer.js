@@ -4,6 +4,8 @@ import Remark from 'remark';
 import ReactRenderer from 'remark-react';
 import RemarkTaskList from 'remark-task-list';
 
+// hijack <a> links. if they're relative, use react-router to generate a link.
+// if they're to an outside domain, just link to it in a new window
 class WikiLink extends Component {
   static contextTypes = {
     router: PropTypes.object.isRequired
@@ -39,13 +41,15 @@ class Markdown extends Component {
         li: (props) => {
           // this is awful but it transforms list items that are task lists into checkbox + label
           if (props.className && props.className.indexOf('task-list-item') >= 0) {
-            const checkbox = props.children.shift();
-            const labelChildren = props.children.splice(0);
+            const checkbox = props.children.shift(); // the checkbox is the first child
+            const labelChildren = props.children.splice(0); // everything else is the list item
 
+            // make a new checkbox and stuff everything else into a label
             props.children.push(<input type="checkbox" id={'check-'+props.id} key={'check-'+props.id} checked={checkbox.props.checked !== undefined} onChange={(ev) => onChecked(ev.target.parentElement.id)} />);
             props.children.push(<label key={'label-'+props.id} htmlFor={'check-'+props.id}>{labelChildren}</label>);
           }
 
+          // just return the same dang thing we'd return before
           return <li {...props}>{props.children}</li>;
         },
 
@@ -53,6 +57,7 @@ class Markdown extends Component {
       }
     }
 
+    // return the html version of the markdown
     return Remark().use(ReactRenderer, options).use(RemarkTaskList).processSync(this.props.text).contents;
   }
 }

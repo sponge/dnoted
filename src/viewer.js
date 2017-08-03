@@ -10,39 +10,43 @@ import Markdown from './markdownviewer.js';
 
 class Viewer extends Component {
   static propTypes = {
-    name: PropTypes.string,
-    path: PropTypes.string,
-    text: PropTypes.string,
-    rev: PropTypes.string,
-    latestRev: PropTypes.string,
-    isLoading: PropTypes.bool,
-    viewFile: PropTypes.func.isRequired,
-    onClickEdit: PropTypes.func.isRequired,
-    onNewVersion: PropTypes.func.isRequired,
-    onClickMenu: PropTypes.func.isRequired,
-    onChecked: PropTypes.func.isRequired,
-    onTaskListChecked: PropTypes.func.isRequired
+    name: PropTypes.string, // name of the file, just path for now
+    path: PropTypes.string, // path to the file
+    text: PropTypes.string, // contents of the file
+    rev: PropTypes.string, // revision of the file we are actually viewing
+    latestRev: PropTypes.string, // latest revision of file, will trigger reload automatically
+    isLoading: PropTypes.bool, // show loading indicator, disable some ui
+    viewFile: PropTypes.func.isRequired, // redux callback to initiate file download
+    onClickEdit: PropTypes.func.isRequired, // callback when user clicks edit
+    onNewVersion: PropTypes.func.isRequired, // redux callback when we know a new version of the file exists
+    onClickMenu: PropTypes.func.isRequired, // callback when user clicks hamburger menu
+    onChecked: PropTypes.func.isRequired, // redux callback to change the checkbox
+    onTaskListChecked: PropTypes.func.isRequired // callback when tasklist changes, usually just for saving the file
   }
 
   static contextTypes = {
     router: PropTypes.object.isRequired
   }
 
+  // trigger redux action for file download
   componentWillMount() {
     this.props.viewFile(this.props.path);
   }
 
   componentWillReceiveProps(nextProps) {
+    // we changed files, update
     if (nextProps.path !== this.props.path) {
       this.props.viewFile(nextProps.path);
     }
 
+    // we have a new version, trigger callback. redux will reload file
     if (nextProps.latestRev !== nextProps.rev) {
       this.props.onNewVersion(nextProps.path);
     }
   }
 
   onChecked = (id) => {
+    // tell redux to update the store, and then trigger the callback that the markdown body has changed
     this.props.onChecked(id);
     this.props.onTaskListChecked();
   }

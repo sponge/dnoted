@@ -19,40 +19,44 @@ import 'codemirror/theme/railscasts.css';
 
 class Editor extends Component {
   static propTypes = {
-    name: PropTypes.string,
-    path: PropTypes.string,
-    text: PropTypes.string,
-    rev: PropTypes.string,
-    latestRev: PropTypes.string,
-    isLoading: PropTypes.bool,
-    newFile: PropTypes.func.isRequired,
-    viewFile: PropTypes.func.isRequired,
-    onClickCancel: PropTypes.func.isRequired,
-    onClickDelete: PropTypes.func,
-    onClickReload: PropTypes.func.isRequired,
-    onClickSave: PropTypes.func.isRequired,
-    onClickMenu: PropTypes.func.isRequired
+    name: PropTypes.string, // user-editable name of the file
+    path: PropTypes.string, // original path of file
+    text: PropTypes.string, // file contents
+    rev: PropTypes.string, // revision from provider
+    latestRev: PropTypes.string, // latest revision from provider to check if new version
+    isLoading: PropTypes.bool, // show loading indicator and disable some ui
+    newFile: PropTypes.func.isRequired, // clear current file in redux store
+    viewFile: PropTypes.func.isRequired, // request file from provider
+    onClickCancel: PropTypes.func.isRequired, // user clicked cancel
+    onClickDelete: PropTypes.func, // user clicked delete
+    onClickReload: PropTypes.func.isRequired, // user clicked reload file when active
+    onClickSave: PropTypes.func.isRequired, // user clicked save
+    onClickMenu: PropTypes.func.isRequired // user clicked hamburger menu
   }
   
   constructor() {
     super();
     
+    // we need to copy some state internally since we don't hand to handle redux actions
+    // for every keypress.
     this.state = {
       path: null,
       rev: null,
       name: '',
       text: '',
-      disableQuitPrompt: false
+      disableQuitPrompt: false // don't show "wanna leave?" message when navigating away
     }
   }
   
   componentDidMount() {
+    // sync up the preview scrolling with the editor scrolling
     this.editDOM = findDOMNode(this.refs.editBox)
     this.previewDOM = findDOMNode(this.refs.previewBox)
     this.editDOM.addEventListener('scroll', this._handleScroll.bind(this));
   }
 
   componentWillMount() {
+    // determine if we need a new file or to clear any old file
     if (this.props.path) {
       this.props.viewFile(this.props.path);
     } else {
@@ -61,10 +65,12 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // request a new file
     if (nextProps.path !== this.props.path) {
       this.props.viewFile(nextProps.path);
     }
 
+    // we got a new file, set the contents
     if (nextProps.rev !== this.state.rev) {
       this.setState({
         path: nextProps.path,
@@ -75,6 +81,7 @@ class Editor extends Component {
     }
   }
 
+  // try and sync up the code scrollbar to the mirror scrollbar, basic implementation
   _handleScroll = (ev) => {
     const scrollEle = ev.srcElement;
     const otherEle = ev.srcElement === this.editDOM ? this.previewDOM : this.editDOM;
@@ -82,18 +89,21 @@ class Editor extends Component {
     otherEle.scrollTop = (otherEle.scrollHeight - otherEle.clientHeight) * pct;
   }
 
+  // user changed the title field
   onNameChange = (event) => {
     this.setState({
       name: event.target.value
     })
   }
   
+  // user typed in the editor
   onTextChange = (text) => {
     this.setState({
       text: text
     });
   };
 
+  // user requested save
   onSave = (ev) => {
     this.setState({
       disableQuitPrompt: true
@@ -103,10 +113,12 @@ class Editor extends Component {
     
   }
 
+  // user clicked a checkbox in the preview. update the editor with the proper text
   onChecked = (name) => {
+    // generate markdown with that field toggled
     const newText = Remark().use(RemarkTaskList, {toggle: [name]}).processSync(this.state.text).contents;
-    console.log('test', name, newText);
 
+    // codemirror doesn't pick up the change of the value attr. use callback to set it manually
     this.setState({
       text: newText
     }, () => {
@@ -114,6 +126,9 @@ class Editor extends Component {
     })
   }
 
+  // sublime/vs code style: single line? put indent chars in. multiline? indent
+  // FIXME: single line unindent should still unindent
+  // FIXME: detect lists, tab in/out list if its in a list
   _indentListOrTab(cm, unindent) {
     const startLine = cm.getCursor('start').line;
     const endLine = cm.getCursor('end').line;
@@ -133,6 +148,7 @@ class Editor extends Component {
     }
   }
 
+  // keyboard shortcut for stuff that puts strings in the beginning of the line
   _startOfLine(cm, str) {
     const line = cm.getCursor().line;
     const text = cm.getLine(line);
@@ -143,6 +159,7 @@ class Editor extends Component {
     }
   }
 
+  // keyboard shortcut for inline formatting that either inserts at position or wraps the selection in the string
   _wrapSelection(cm, str) {
     const sel = cm.getSelection();
     cm.replaceSelection(str + (sel.length ? cm.getSelection() + str : ''));
@@ -171,7 +188,8 @@ class Editor extends Component {
         'Ctrl-K': (cm) => this._wrapSelection(cm, "~~"),
         'Ctrl-S': (cm) => this.onSave()
       }
-		};
+    };
+    // do we need to show the reload button?
     const newerRevision = this.props.latestRev !== this.props.rev;
 
     const toolbar = <span>

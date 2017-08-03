@@ -12,11 +12,13 @@ class Sidebar extends Component {
     onFolderClick: PropTypes.func.isRequired
   }
 
+  // when user clicked on a folder or file in the tree
   onNodeClick = (ev) => {
     this.props.onNodeClick(ev.target.getAttribute('data-link'));
     return false;
   }
 
+  // when user clicked the folder icon, will hide/show children
   onFolderClick = (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
@@ -26,14 +28,15 @@ class Sidebar extends Component {
     return false;
   }
 
-// return a list of folders and files recursively
+  // return a list of folders and files recursively
   renderIndexNode = (subnodeId) => {
     const subnode = this.props.index.byPath[subnodeId];
     let subeles = [];
     let files = [];
 
     if (subnode.expanded) {
-      subeles = map(subnode.children, this.renderIndexNode);
+      subeles = map(subnode.children, this.renderIndexNode); // recursion here
+      // for each file, render out the list element
       files = map(subnode.files, (id) => {
         const file = this.props.index.byPath[id];
         return <li key={file.path_lower} data-id={file.path_lower}>
