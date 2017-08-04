@@ -2,7 +2,6 @@ import { combineReducers } from 'redux'
 import { filter, forEach } from 'lodash';
 import Remark from 'remark';
 import RemarkTaskList from 'remark-task-list';
-import WelcomeMessage from '../welcomemessage.js';
 
 const viewer = (state = {}, action) => {
   let newState;
@@ -36,7 +35,7 @@ const viewer = (state = {}, action) => {
         isLoading: false,
         isLoaded: false,
         error: true,
-        text: action.payload === 'SHOW_INDEX' ? WelcomeMessage : `Error while showing page: ${action.payload}`
+        text: `Error while showing page: ${action.payload}`
       }
       return newState;
 
@@ -125,7 +124,7 @@ const initialState = {
       children: [], // path for subfolders
       files: [], // path for files in this folder
       parent: null,
-      indexId: '/index.md' // path to file to make folder clickable. hardcode an index in to show tutorial message
+      indexId: undefined // path to file to make folder clickable.
     }
   }
 }
@@ -187,7 +186,7 @@ const index = (state = initialState, action) => {
           // add the path to the folder that it sits in for easy reference
           file.parent = node.path_lower;
           
-          // treat index.md specially so you can click on the folder and not show index.md
+          // treat index.md specially so you can click on the folder and not show index.md in the folder list
           if (file.name === "index.md") {
             node.indexId = file.path_lower;
           } else {

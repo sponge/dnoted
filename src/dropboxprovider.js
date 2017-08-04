@@ -79,7 +79,7 @@ class DropboxProvider extends EventEmitter {
         })
       }).then((response) => {
         if (!response.ok) {
-          reject(path === '/index.md' ? 'SHOW_INDEX' : response.statusText);
+          reject(response.statusText);
           return;
         }
 

@@ -16,12 +16,12 @@ class Viewer extends Component {
     rev: PropTypes.string, // revision of the file we are actually viewing
     latestRev: PropTypes.string, // latest revision of file, will trigger reload automatically
     isLoading: PropTypes.bool, // show loading indicator, disable some ui
-    viewFile: PropTypes.func.isRequired, // redux callback to initiate file download
-    onClickEdit: PropTypes.func.isRequired, // callback when user clicks edit
-    onNewVersion: PropTypes.func.isRequired, // redux callback when we know a new version of the file exists
+    viewFile: PropTypes.func, // redux callback to initiate file download
+    onClickEdit: PropTypes.func, // callback when user clicks edit
+    onNewVersion: PropTypes.func, // redux callback when we know a new version of the file exists
     onClickMenu: PropTypes.func.isRequired, // callback when user clicks hamburger menu
     onChecked: PropTypes.func.isRequired, // redux callback to change the checkbox
-    onTaskListChecked: PropTypes.func.isRequired // callback when tasklist changes, usually just for saving the file
+    onTaskListChecked: PropTypes.func // callback when tasklist changes, usually just for saving the file
   }
 
   static contextTypes = {
@@ -30,7 +30,9 @@ class Viewer extends Component {
 
   // trigger redux action for file download
   componentWillMount() {
-    this.props.viewFile(this.props.path);
+    if (this.props.viewFile && this.props.path) {
+      this.props.viewFile(this.props.path);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -40,7 +42,7 @@ class Viewer extends Component {
     }
 
     // we have a new version, trigger callback. redux will reload file
-    if (nextProps.latestRev !== nextProps.rev) {
+    if (this.props.onNewVersion && nextProps.latestRev !== nextProps.rev) {
       this.props.onNewVersion(nextProps.path);
     }
   }
@@ -48,7 +50,9 @@ class Viewer extends Component {
   onChecked = (id) => {
     // tell redux to update the store, and then trigger the callback that the markdown body has changed
     this.props.onChecked(id);
-    this.props.onTaskListChecked();
+    if (this.props.onTaskListChecked) {
+      this.props.onTaskListChecked();
+    }
   }
 
   render() {
@@ -56,7 +60,7 @@ class Viewer extends Component {
       <NavLink className="toaster" onClick={this.props.onClickMenu}><FA name="bars"/></NavLink>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
       {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
-      {!this.props.isLoading && !this.props.error ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
+      {this.props.onClickEdit && !this.props.isLoading && !this.props.error ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
     </span>
 
     return <ToolbarView toolbar={toolbar}>

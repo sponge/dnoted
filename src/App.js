@@ -7,6 +7,9 @@ import FA from 'react-fontawesome';
 import { Provider, Flex, Box, NavLink } from 'rebass'
 import { debounce } from 'lodash';
 
+import Remark from 'remark';
+import RemarkTaskList from 'remark-task-list';
+
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
 import { Provider as ReduxProvider } from 'react-redux'
@@ -15,8 +18,9 @@ import DropboxProvider from './dropboxprovider.js';
 
 import ToolbarView from './toolbarview.js';
 import { ConnectedSidebar } from './sidebar.js';
-import { ConnectedViewer } from './viewer.js';
+import { Viewer, ConnectedViewer } from './viewer.js';
 import { ConnectedEditor } from './editor.js';
+import WelcomeMessage from './welcomemessage.js';
 
 import * as Actions from './actions'
 import rootReducer from './reducers'
@@ -26,7 +30,8 @@ class App extends Component {
     super();
 
     this.state = {
-      hideNav: false // show or hide the sidebar tree
+      hideNav: false, // show or hide the sidebar tree
+      welcomeText: WelcomeMessage // save welcome message so you can use the checkboxes on it
     };
 
     // try and load a saved toc from localstorage
@@ -172,6 +177,15 @@ class App extends Component {
                   <Route path="/edit/*" render={(props) => {
                     const path = this.getFilePath(props);
                     return <ConnectedEditor onClickMenu={this.onClickMenu} onClickDelete={this.onClickDelete} path={path} onClickCancel={() => props.history.push(path)} onClickSave={this.saveFile}/>
+                  }}/>
+
+                  <Route path="/help!" render={(props) => {
+                    const onChecked = (id) => {
+                      const newText = Remark().use(RemarkTaskList, {toggle: [id]}).processSync(this.state.welcomeText).contents;
+                      this.setState({welcomeText: newText});
+                    }
+
+                    return <Viewer onChecked={onChecked} onClickMenu={this.onClickMenu} text={this.state.welcomeText}/>
                   }}/>
 
                   <Route path="/*" render={(props) => {

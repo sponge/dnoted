@@ -203,7 +203,7 @@ class Editor extends Component {
     </span>
 
     return <ToolbarView toolbar={toolbar} hasFlex={true}>
-      <Prompt when={this.state.disableQuitPrompt == false && this.state.text != this.props.text} message={"Discard changes?"}/>
+      <Prompt when={this.state.disableQuitPrompt === false && this.state.text !== this.props.text} message={"Discard changes?"}/>
       <Box w={6/10} ref="editBox" style={{overflowY: 'scroll'}}>
         {!this.props.isLoading ? <CodeMirror ref="cm_instance" className="page" onChange={this.onTextChange} value={this.state.text} options={options}/> : null }
       </Box>

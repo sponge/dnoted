@@ -34,6 +34,9 @@ class Sidebar extends Component {
     let subeles = [];
     let files = [];
 
+    // index always has a document (the tutorial)
+    const indexId = subnode.indexId ? subnode.indexId : subnode.path_lower === '/' ? '/help!' : undefined;
+
     if (subnode.expanded) {
       subeles = map(subnode.children, this.renderIndexNode); // recursion here
       // for each file, render out the list element
@@ -50,12 +53,12 @@ class Sidebar extends Component {
 
     return <ul key={subnode.id}>
       <li>
-        {subnode.indexId ?
+        {indexId ?
           <span>
             <span data-folder={subnode.path_lower} onClick={this.onFolderClick}>
               <FA className="folder" fixedWidth={true} name={subnode.expanded ? "folder-open" : "folder"}/>
             </span>
-            <span onClick={this.onNodeClick} data-link={subnode.indexId} className="folder-clickable">{subnode.name}</span>
+            <span onClick={this.onNodeClick} data-link={indexId} className="folder-clickable">{subnode.name}</span>
           </span>
         : 
           <span className="disabled">
