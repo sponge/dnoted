@@ -82,6 +82,29 @@
     list-style-type: none;
 }
 
+.task-list-item.complete {
+    color: #999;
+}
+
+.task-list-item:before {
+    content: "►";
+    padding-right: 5px;
+    margin-left: -16px;
+    font-size: 0.75em;
+}
+
+.task-list-item label:hover {
+    text-decoration: underline;
+}
+
+.task-list-item.complete label {
+    text-decoration: line-through;
+}
+
+.task-list-item.complete label:hover {
+    text-decoration: line-through underline;
+}
+
 .page li p {
     margin: 0;
     padding: 0;
