@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, NavLink } from 'rebass'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { viewFile, reloadFile, toggleTaskListItem } from './actions'
+import { viewFile, reloadFile, toggleTaskListItem, shareFile } from './actions'
 import FA from 'react-fontawesome';
 import ToolbarView from './toolbarview.js';
 import Markdown from './markdownviewer.js';
@@ -20,6 +20,7 @@ class Viewer extends Component {
     onClickEdit: PropTypes.func, // callback when user clicks edit
     onNewVersion: PropTypes.func, // redux callback when we know a new version of the file exists
     onClickMenu: PropTypes.func.isRequired, // callback when user clicks hamburger menu
+    onClickShare: PropTypes.func,
     onChecked: PropTypes.func.isRequired, // redux callback to change the checkbox
     onTaskListChecked: PropTypes.func // callback when tasklist changes, usually just for saving the file
   }
@@ -60,7 +61,9 @@ class Viewer extends Component {
       <NavLink className="toaster" onClick={this.props.onClickMenu}><FA name="bars"/></NavLink>
       <FA spin fixedWidth={true} name={this.props.isLoading ? "spinner" : ""}/>
       {!this.props.isLoading ? <Text> {this.props.name}</Text> : null }
-      {this.props.onClickEdit && !this.props.isLoading && !this.props.error ? <NavLink ml='auto' onClick={this.props.onClickEdit}>Edit</NavLink> : null }
+      <Text ml='auto'/>
+      {this.props.onClickShare && !this.props.isLoading && !this.props.error ? <NavLink onClick={() => this.props.onClickShare(this.props.path)}>Share</NavLink> : null }
+      {this.props.onClickEdit && !this.props.isLoading && !this.props.error ? <NavLink onClick={this.props.onClickEdit}>Edit</NavLink> : null }
     </span>
 
     return <ToolbarView toolbar={toolbar}>
@@ -84,7 +87,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onChecked: id => dispatch(toggleTaskListItem(id)),
     onNewVersion: path => dispatch(reloadFile(path)),
-    viewFile: path => dispatch(viewFile(path))
+    viewFile: path => dispatch(viewFile(path)),
+    onClickShare: path => dispatch(shareFile(path))
   }
 }
 

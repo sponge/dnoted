@@ -75,6 +75,28 @@ const viewer = (state = {}, action) => {
       return {...state, ...ns};
     }
 
+    case 'SHARE_FILE_PENDING':
+      newState = {
+        showShare: true,
+        links: []
+      }
+
+      return {...state, ...newState};
+
+    case 'SHARE_FILE_FULFILLED':
+      newState = {
+        links: action.payload
+      }
+
+      return {...state, ...newState}
+
+    case 'HIDE_SHARE':
+      newState = {
+        showShare: false
+      }
+
+      return {...state, ...newState};
+
     default:
       return state;
   }

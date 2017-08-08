@@ -1,5 +1,6 @@
 import Dropbox from 'dropbox';
 import EventEmitter from 'event-emitter-es6';
+import { map } from 'lodash';
 // note: using fetch because of https://github.com/dropbox/dropbox-sdk-js/issues/85
 
 // FIXME: pass a wrapped error back to make it slightly more vendor agnostic
@@ -110,6 +111,26 @@ class DropboxProvider extends EventEmitter {
     });
 
     return filePromise;
+  }
+
+  getSharedLink = (path) => {
+    const sharePromise = new Promise((resolve, reject) => {
+      this.dbx.sharingGetSharedLinks({path: path}).then((response) => {
+        if (response.links.length) {
+          resolve(map(response.links, (el) => { return el.url}));
+          return;
+        }
+
+        return this.dbx.sharingCreateSharedLinkWithSettings({path: path});
+      }).then((response) => {
+        resolve([response.url]);
+      }).catch((error) => {
+        reject('Error while creating shared link');
+      });;
+
+    });
+
+    return sharePromise;
   }
 
   _fileslistFolderHandler = (response) => {

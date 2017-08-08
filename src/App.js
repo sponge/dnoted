@@ -16,6 +16,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 
 import DropboxProvider from './dropboxprovider.js';
 
+import { ConnectedShareOverlay } from './shareoverlay.js';
 import ToolbarView from './toolbarview.js';
 import { ConnectedSidebar } from './sidebar.js';
 import { Viewer, ConnectedViewer } from './viewer.js';
@@ -42,8 +43,7 @@ class App extends Component {
     }
 
     this.store = createStore( rootReducer, initial, applyMiddleware(promiseMiddleware()) );
-    window.dbgstore = this.store; // for debugging
-
+  
     // save index changes
     this.store.subscribe(() => {
       const state = this.store.getState();
@@ -57,6 +57,10 @@ class App extends Component {
       this.store.dispatch(Actions.updateFileIndex(updates));
       localStorage.setItem('cursor', this.provider.cursor);
     });
+
+    // for debugging
+    window.dbgstore = this.store; 
+    window.dbgdbx = this.provider; 
   }
 
   static contextTypes = {
@@ -195,6 +199,7 @@ class App extends Component {
                 </Switch>
               </Box>
             </Flex>
+            <ConnectedShareOverlay/>
         </Provider>
       </ReduxProvider>
     );

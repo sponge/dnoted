@@ -8,6 +8,7 @@ if (localStorage.getItem('access_token')) {
 
 export const viewFile = createAction('VIEW_FILE', provider.getTextContents);
 export const reloadFile = createAction('RELOAD_FILE', provider.getTextContents);
+export const shareFile = createAction('SHARE_FILE', provider.getSharedLink);
 
 export function clearFile() {
     return { type: 'CLEAR_FILE' };  
@@ -23,6 +24,10 @@ export function startLoading() {
 
 export function stopLoading() {
     return { type: 'LOADING_END' };
+}
+
+export function hideShare() {
+    return { type: 'HIDE_SHARE' };
 }
 
 export function toggleFolderVisibility(path) {

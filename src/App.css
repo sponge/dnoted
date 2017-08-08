@@ -3,6 +3,14 @@
     height: 100vh;
 }
 
+.overlay {
+    color: black;
+}
+
+.overlay a {
+    color: #3F8BE9;
+}
+
 .sidebar {
     background-color: #2A2B2E;
     user-select: none;
