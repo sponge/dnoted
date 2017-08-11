@@ -1,14 +1,19 @@
 import { createAction } from 'redux-actions'
 import DropboxProvider from '../dropboxprovider.js';
 
-let provider = {};
-if (localStorage.getItem('access_token')) {
-    provider = new DropboxProvider(localStorage.getItem('access_token'), localStorage.getItem('cursor'));
+let provider = undefined;
+
+function lateBindToken(cb, ...args) {
+    if (provider === undefined) {
+        provider = new DropboxProvider(localStorage.getItem('access_token'), localStorage.getItem('cursor'));
+    }
+
+    return provider[cb](...args);
 }
 
-export const viewFile = createAction('VIEW_FILE', provider.getTextContents);
-export const reloadFile = createAction('RELOAD_FILE', provider.getTextContents);
-export const shareFile = createAction('SHARE_FILE', provider.getSharedLink);
+export const viewFile = createAction('VIEW_FILE', lateBindToken.bind(this, 'getTextContents'));
+export const reloadFile = createAction('RELOAD_FILE', lateBindToken.bind(this, 'getTextContents'));
+export const shareFile = createAction('SHARE_FILE', lateBindToken.bind(this, 'getSharedLink'));
 
 export function clearFile() {
     return { type: 'CLEAR_FILE' };  
