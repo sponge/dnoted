@@ -17,6 +17,24 @@
     /* background-color: rgba(0,90,0,255); */
 }
 
+.sidebarToaster .fa {
+    padding: 0 0.5em;
+}
+
+.sidebarToaster {
+    visibility: hidden;
+}
+
+@media screen and (max-width: 48em){
+    .sidebarToaster {
+        visibility: visible;
+    }
+
+    .content.hidden {
+        display: none;
+    }
+}
+
 .toaster .fa {
     padding: 0 0.5em;
 }

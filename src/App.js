@@ -167,12 +167,15 @@ class App extends Component {
       <ReduxProvider store={this.store}>
         <Provider>
             <Flex className="App">
-              <Box w={(this.state.hideNav ? 0:1)/6} className="sidebar">
-                <ToolbarView toolbar={<div><NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink></div>}>
+              <Box w={(this.state.hideNav ? [0/6]:[1, 1, 2/7, 1/6])} className="sidebar">
+                <ToolbarView toolbar={(<div>
+                    <NavLink is={Link} to='/new'><FA name="plus-circle"/></NavLink>
+                    <NavLink ml="auto" className="sidebarToaster" onClick={this.onClickMenu}><FA name="bars"/></NavLink>
+                  </div>)}>
                   <ConnectedSidebar onNodeClick={(path) => this.context.router.history.push(path)}/>
                 </ToolbarView>
               </Box>
-              <Box w={(this.state.hideNav ? 6:5)/6} className="content">
+              <Box w={(this.state.hideNav ? [6/6]:[0, 0, 5/7, 5/6])} className={`content ${!this.state.hideNav ? 'hidden' : ''}`}>
                 <Switch>
                   <Route exact path="/new" render={(props) => {
                     return <ConnectedEditor onClickMenu={this.onClickMenu} onClickCancel={() => props.history.go(-1)} onClickSave={this.saveFile}/>
