@@ -46,6 +46,11 @@ class Viewer extends Component {
     if (this.props.onNewVersion && nextProps.latestRev !== nextProps.rev) {
       this.props.onNewVersion(nextProps.path);
     }
+
+    // we don't have a root index.md, forward them to the help
+    if (nextProps.error === true && nextProps.path === '/index.md') {
+      this.context.router.history.replace('help!');
+    }
   }
 
   onChecked = (id) => {
